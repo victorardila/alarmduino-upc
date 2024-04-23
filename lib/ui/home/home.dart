@@ -31,15 +31,15 @@ class _HomeState extends State<Home> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        width: 60,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                // Cargar svg
-                                image: AssetImage('assets/svg/LogoUPC.svg')),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(40))),
+                      width: 60,
+                      height: 60,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(40))),
+                      child: Image.asset(
+                        'assets/svg/LogoUPC.svg',
+                        fit: BoxFit.contain, // Opción de ajuste para el tamaño del SVG
                       ),
+                    ),
                       //const SizedBox(width: 30,),
                       const Text(
                         "AlArmDuino \nUPC",
