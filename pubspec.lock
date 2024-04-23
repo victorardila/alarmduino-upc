@@ -62,6 +62,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bluetooth_serial_ble:
+    dependency: "direct main"
+    description:
+      name: flutter_bluetooth_serial_ble
+      sha256: "771e46fa520e22c92f8d0b0c58c2796436c97dee17bde80beb3416c318746ccb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -186,3 +194,4 @@ packages:
     version: "2.1.4"
 sdks:
   dart: ">=3.0.1 <4.0.0"
+  flutter: ">=1.17.0"
