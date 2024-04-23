@@ -42,7 +42,10 @@ class AnimatedTextState extends State<AnimatedText>
         child: Text(
           '<No Device Connection>',
           style: TextStyle(
-              fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
+            fontSize: 50.0,
+            fontFamily: 'LCD',
+            color: Colors.white,
+          ),
         ),
       ),
     );
