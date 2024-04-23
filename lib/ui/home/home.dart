@@ -35,6 +35,7 @@ class _HomeState extends State<Home> {
                         height: 60,
                         decoration: const BoxDecoration(
                             image: DecorationImage(
+                                // Cargar svg
                                 image: AssetImage('assets/svg/LogoUPC.svg')),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(40))),
@@ -53,7 +54,7 @@ class _HomeState extends State<Home> {
                       IconButton(
                           onPressed: () {},
                           icon: const Image(
-                            image: AssetImage('assets/preferences.png'),
+                            image: AssetImage('assets/img/preferences.png'),
                             width: 40,
                             height: 40,
                           )),

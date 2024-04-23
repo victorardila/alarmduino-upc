@@ -11,7 +11,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'NetduinoUPC App',
+      title: 'AlArmDuino UPC',
       theme: ThemeData.dark(),
       initialRoute: '/principal',
       routes: {
