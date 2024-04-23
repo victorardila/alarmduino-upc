@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AnimatedText extends StatefulWidget {
   const AnimatedText({super.key});
@@ -36,17 +37,33 @@ class AnimatedTextState extends State<AnimatedText>
 
   @override
   Widget build(BuildContext context) {
-    return SlideTransition(
-      position: _animacion,
-      child: const Center(
-        child: Text(
-          '<No Device Connection>',
-          style: TextStyle(
-            fontSize: 50.0,
-            fontFamily: 'LCD',
-            color: Colors.white,
+    return Container(
+      color: Colors.red[900],
+      child: Row(
+        children: [
+          SlideTransition(
+            position: _animacion,
+            child: const Center(
+              child: Row(
+                children: [
+                  Text(
+                    '<No Device Connection>',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontFamily: 'LCD',
+                      color: Colors.white,
+                    ),
+                  ),
+                  Icon(
+                    FontAwesomeIcons.satelliteDish,
+                    color: Colors.white,
+                    size: 20.0,
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -57,8 +57,8 @@ class _HomeState extends State<Home> {
                           onPressed: () {},
                           icon: const Image(
                             image: AssetImage('assets/img/preferences.png'),
-                            width: 40,
-                            height: 40,
+                            width: 60,
+                            height: 60,
                           )),
                     ],
                   ),
