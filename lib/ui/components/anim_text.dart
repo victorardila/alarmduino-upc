@@ -47,17 +47,17 @@ class AnimatedTextState extends State<AnimatedText>
               child: Row(
                 children: [
                   Text(
-                    '<No Device Connection>',
+                    '<< No Device Connection >>',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontFamily: 'LCD',
                       color: Colors.white,
                     ),
                   ),
+                  SizedBox(width: 10),
                   Icon(
                     FontAwesomeIcons.satelliteDish,
                     color: Colors.white,
-                    size: 20.0,
                   )
                 ],
               ),

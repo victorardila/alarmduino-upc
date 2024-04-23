@@ -24,7 +24,7 @@ class _IntroSimpleState extends State<IntroSimple> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors
-          .black, // Puedes cambiar el color de fondo según tus necesidades
+          .white, // Puedes cambiar el color de fondo según tus necesidades
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
