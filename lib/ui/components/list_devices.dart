@@ -3,12 +3,14 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class ListDevices extends StatefulWidget {
   final bluetooth;
-  final deviceConnected;
+  final devices;
+  final isConnecting;
   final connection;
   const ListDevices({
     super.key,
     this.bluetooth,
-    this.deviceConnected,
+    this.devices,
+    this.isConnecting,
     this.connection,
   });
 
@@ -17,41 +19,53 @@ class ListDevices extends StatefulWidget {
 }
 
 class _ListDevicesState extends State<ListDevices> {
-  late var _deviceConnected;
   List<BluetoothDevice> _devices = [];
   late FlutterBluetoothSerial _bluetooth;
   BluetoothConnection? _connection;
-
-  void _getDevices() async {
-    var res = await _bluetooth.getBondedDevices();
-    setState(() => _devices = res);
-  }
+  BluetoothDevice? _deviceConnected;
+  bool _isConnecting = false;
 
   @override
   void initState() {
     super.initState();
     _bluetooth = widget.bluetooth;
-    _deviceConnected = widget.deviceConnected;
+    _devices = widget.devices;
+    _isConnecting = widget.isConnecting;
     _connection = widget.connection;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      tileColor: Colors.black12,
-      title: Text("Conectado a: ${_deviceConnected?.name ?? "ninguno"}"),
-      trailing: _connection?.isConnected ?? false
-          ? TextButton(
-              onPressed: () async {
-                await _connection?.finish();
-                setState(() => _deviceConnected = null);
-              },
-              child: const Text("Desconectar"),
-            )
-          : TextButton(
-              onPressed: _getDevices,
-              child: const Text("Ver dispositivos"),
+    return _isConnecting
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Container(
+              color: Colors.grey.shade100,
+              child: Column(
+                children: [
+                  ...[
+                    for (final device in _devices)
+                      ListTile(
+                        title: Text(device.name ?? device.address),
+                        trailing: TextButton(
+                          child: const Text('conectar'),
+                          onPressed: () async {
+                            setState(() => _isConnecting = true);
+
+                            _connection = await BluetoothConnection.toAddress(
+                                device.address);
+                            _deviceConnected = device;
+                            _devices = [];
+                            _isConnecting = false;
+                            //_receiveData();
+                            setState(() {});
+                          },
+                        ),
+                      )
+                  ]
+                ],
+              ),
             ),
-    );
+          );
   }
 }
