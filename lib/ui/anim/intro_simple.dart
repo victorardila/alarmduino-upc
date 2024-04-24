@@ -44,6 +44,7 @@ class _IntroSimpleState extends State<IntroSimple> {
                   TyperAnimatedText(
                     'AlArmDuino UPC', // Puedes personalizar el nombre de tu aplicación aquí
                     textStyle: TextStyle(
+                      color: Colors.black,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),

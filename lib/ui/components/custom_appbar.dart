@@ -1,3 +1,4 @@
+import 'package:alarmduino_upc/ui/components/animated_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -12,6 +13,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: Container(
+          alignment: Alignment.center,
+          child: const AnimatedText(),
+        ),
+      ),
       toolbarHeight: 150,
       titleSpacing: 0,
       leading: Padding(

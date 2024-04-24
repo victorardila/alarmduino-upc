@@ -38,8 +38,14 @@ class _ItemDayState extends State<ItemDay> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
+    return InkWell(
+      onTap: () {},
+      splashColor:
+          Colors.blue.withOpacity(0.5), // Color de la animación de onda
+      focusColor:
+          Color.fromARGB(255, 106, 192, 181).withOpacity(0.5), // Color del foco
+      highlightColor: Color.fromARGB(255, 0, 255, 191)
+          .withOpacity(0.5), // Color del resaltado
       child: Container(
         height: alto,
         width: ancho,
