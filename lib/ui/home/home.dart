@@ -4,7 +4,9 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:alarmduino_upc/ui/views/alarm_list.dart';
 import 'package:alarmduino_upc/ui/views/alarm_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,6 +22,43 @@ class _HomeState extends State<Home> {
   List<int> _selectedIndexList = [0, 1];
   //VARIABLES
   int _page = 0;
+  final _bluetooth = FlutterBluetoothSerial.instance;
+  bool _bluetoothState = false;
+  bool _isConnecting = false;
+  BluetoothConnection? _connection;
+  List<BluetoothDevice> _devices = [];
+  BluetoothDevice? _deviceConnected;
+
+  void _requestPermission() async {
+    await Permission.location.request();
+    await Permission.bluetooth.request();
+    await Permission.bluetoothScan.request();
+    await Permission.bluetoothConnect.request();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _requestPermission();
+    _bluetooth.state.then((state) {
+      setState(() => _bluetoothState = state.isEnabled);
+    });
+    _bluetooth.onStateChanged().listen((state) {
+      switch (state) {
+        case BluetoothState.STATE_OFF:
+          setState(() => _bluetoothState = false);
+          break;
+        case BluetoothState.STATE_ON:
+          setState(() => _bluetoothState = true);
+          break;
+        // case BluetoothState.STATE_TURNING_OFF:
+        //   break;
+        // case BluetoothState.STATE_TURNING_ON:
+        //   break;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> views = <Widget>[
@@ -32,7 +71,14 @@ class _HomeState extends State<Home> {
         preferredSize: Size.fromHeight(150), // Altura deseada del appbar
         child: CustomAppBar(),
       ),
-      endDrawer: const CustomDrawer(),
+      endDrawer: CustomDrawer(
+        bluetooth: _bluetooth,
+        bluetoothState: _bluetoothState,
+        devices: _devices,
+        deviceConnected: _deviceConnected,
+        isConnecting: _isConnecting,
+        connection: _connection,
+      ),
       body: Container(
         // La altura debe ajustarse al tamaño de la pantalla restante
         height: MediaQuery.of(context).size.height - 150,
