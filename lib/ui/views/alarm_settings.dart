@@ -1,3 +1,4 @@
+import 'package:alarmduino_upc/ui/components/hour_selection.dart';
 import 'package:alarmduino_upc/ui/components/item_day.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -155,6 +156,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                       topRight: Radius.circular(20),
                     ),
                   ),
+                  child: HourSelection(),
                 ),
               ],
             ),

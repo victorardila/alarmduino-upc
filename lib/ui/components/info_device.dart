@@ -38,10 +38,45 @@ class _InfoDeviceState extends State<InfoDevice> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      tileColor: Colors.black12,
-      title: Text("Conectado a: ${_deviceConnected?.name ?? "ninguno"}"),
+      tileColor: Color.fromARGB(255, 24, 34, 24).withOpacity(0.7),
+      title: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 16,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.w700,
+          ),
+          children: [
+            TextSpan(
+              text: 'Conectado a: ',
+              style: TextStyle(color: Colors.white // Color para "Conectado a:"
+                  ),
+            ),
+            TextSpan(
+              text: '${_deviceConnected?.name ?? "Ninguno"}',
+              style: TextStyle(
+                fontSize: 16,
+                color: _deviceConnected?.name != null
+                    ? const Color.fromARGB(255, 43, 184, 48)
+                    : Color.fromARGB(255, 230, 0,
+                        0), // Color para el nombre del dispositivo,
+              ),
+            ),
+          ],
+        ),
+      ),
       trailing: _connection?.isConnected ?? false
           ? TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 230, 0, 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Radio de borde circular
+                ),
+                textStyle: TextStyle(
+                    fontSize: 18, color: Colors.white, fontFamily: 'Poppins'),
+              ),
               onPressed: () async {
                 await _connection?.finish();
                 setState(() => _deviceConnected = null);
@@ -50,7 +85,19 @@ class _InfoDeviceState extends State<InfoDevice> {
             )
           : TextButton(
               onPressed: _getDevices,
-              child: const Text("Ver dispositivos"),
+              style: TextButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 43, 184, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Radio de borde circular
+                ),
+                textStyle: const TextStyle(fontSize: 18),
+              ),
+              child: const Text(
+                "Ver dispositivos",
+                style: TextStyle(
+                    fontSize: 18, color: Colors.white, fontFamily: 'Poppins'),
+              ),
             ),
     );
   }

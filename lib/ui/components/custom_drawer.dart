@@ -1,4 +1,6 @@
 import 'package:alarmduino_upc/ui/components/custom_switch.dart';
+import 'package:alarmduino_upc/ui/components/info_device.dart';
+import 'package:alarmduino_upc/ui/components/list_devices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -48,29 +50,44 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Drawer(
       backgroundColor: Colors.white,
       child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
+        children: [
           DrawerHeader(
+            margin: EdgeInsets.zero,
             decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 83, 190, 79),
+                gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 121, 219, 118),
+                Color.fromARGB(255, 74, 175, 70)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            )),
+            child: Center(
+              child: CustonSwitch(
+                bluetooth: bluetooth,
+                bluetoothState: _bluetoothState,
+              ),
             ),
-            child: CustonSwitch(
-              bluetooth: bluetooth,
-              bluetoothState: _bluetoothState,
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                InfoDevice(
+                  deviceConnected: _deviceConnected,
+                  connection: _connection,
+                  bluetooth: bluetooth,
+                ),
+                ListDevices(
+                  bluetooth: bluetooth,
+                  devices: _devices,
+                  isConnecting: _isConnecting,
+                  connection: _connection,
+                ),
+              ],
             ),
-          ),
-          ListTile(
-            title: const Text('Alarmas'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: const Text('Configuración'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          )
         ],
       ),
     );

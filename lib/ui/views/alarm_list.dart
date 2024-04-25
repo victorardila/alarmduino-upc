@@ -33,7 +33,7 @@ class _AlarmListState extends State<AlarmList> {
               children: [
                 Container(
                   height: 30.0,
-                  child: Text('Lista de alarmas',
+                  child: const Text('Lista de alarmas',
                       style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
@@ -78,7 +78,8 @@ class _AlarmListState extends State<AlarmList> {
                             IconButton(
                                 onPressed: () {},
                                 icon: Icon(Icons.delete,
-                                    color: Colors.red, size: 36.0))
+                                    color: const Color.fromARGB(255, 255, 0, 0),
+                                    size: 36.0))
                           ],
                         ),
                       );
@@ -157,6 +158,8 @@ class _AlarmListState extends State<AlarmList> {
       mainAxisSize: MainAxisSize.min,
       children: [
         FloatingActionButton(
+          // Efecto toque
+
           tooltip: label,
           onPressed: onPressed,
           mini: false, // Cambiado a false para aumentar el tamaño
@@ -166,7 +169,12 @@ class _AlarmListState extends State<AlarmList> {
           heroTag: null, // Evita la superposición de botones
         ),
         const SizedBox(height: 8.0),
-        Text(label, style: TextStyle(color: Colors.black)),
+        Text(label,
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold,
+                fontSize: 16)),
       ],
     );
   }

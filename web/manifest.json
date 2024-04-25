@@ -1,6 +1,6 @@
 {
-    "name": "alarmduino_upc",
-    "short_name": "alarmduino_upc",
+    "name": "AlArmduino UPC",
+    "short_name": "AlArmduino UPC",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
