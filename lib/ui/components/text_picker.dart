@@ -152,7 +152,7 @@ class _TextPickerState extends State<TextPicker> {
 
   Widget _itemBuilder(BuildContext context, int index) {
     final themeData = Theme.of(context);
-    final defaultStyle = widget.textStyle ?? themeData.textTheme.bodyText2;
+    final defaultStyle = widget.textStyle ?? themeData.textTheme.bodyMedium;
     final selectedStyle = widget.selectedTextStyle ??
         themeData.textTheme.headlineSmall
             ?.copyWith(color: themeData.colorScheme.secondary);
@@ -182,8 +182,6 @@ class _TextPickerState extends State<TextPicker> {
   void _maybeCenterValue() {
     if (_scrollController.hasClients && !isScrolling) {
       int index = widget.items.indexOf(widget.selectedItem);
-      print('selectedItem: ${widget.selectedItem}');
-      print('index: $index');
       if (widget.infiniteLoop) {
         final offset = _scrollController.offset + 0.5 * itemExtent;
         final cycles = (offset / (itemCount * itemExtent)).floor();
