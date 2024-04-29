@@ -1,3 +1,4 @@
+import 'package:alarmduino_upc/ui/components/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -143,6 +144,12 @@ class _AlarmListState extends State<AlarmList> {
             // Handle option 1
           }),
           _buildFabOption(Icons.alarm_add, 'Agregar', () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return CustomDialog();
+              },
+            );
             // Handle option 2
           }),
           _buildFabOption(FontAwesomeIcons.trashCan, 'Borrar', () {
@@ -159,7 +166,6 @@ class _AlarmListState extends State<AlarmList> {
       children: [
         FloatingActionButton(
           // Efecto toque
-
           tooltip: label,
           onPressed: onPressed,
           mini: false, // Cambiado a false para aumentar el tamaño

@@ -98,7 +98,7 @@ class _TextPickerState extends State<TextPicker> {
   double get itemExtent =>
       widget.axis == Axis.vertical ? widget.itemHeight : widget.itemWidth;
 
-  int get itemCount => widget.items.length;
+  int get itemCount => 2;
 
   int get listItemsCount => itemCount + 2 * additionalItemsOnEachSide;
 
@@ -131,13 +131,25 @@ class _TextPickerState extends State<TextPicker> {
                 padding: EdgeInsets.zero,
               )
             else
-              ListView.builder(
-                itemCount: listItemsCount,
-                scrollDirection: widget.axis,
-                controller: _scrollController,
-                itemExtent: itemExtent,
-                itemBuilder: _itemBuilder,
-                padding: EdgeInsets.zero,
+              Container(
+                decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 243, 243, 243),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      )
+                    ]),
+                child: ListView.builder(
+                  itemCount: listItemsCount,
+                  scrollDirection: widget.axis,
+                  controller: _scrollController,
+                  itemExtent: itemExtent,
+                  itemBuilder: _itemBuilder,
+                  padding: EdgeInsets.zero,
+                ),
               ),
             _TextPickerSelectedItemDecoration(
               axis: widget.axis,
@@ -161,8 +173,9 @@ class _TextPickerState extends State<TextPicker> {
     final isExtra = !widget.infiniteLoop &&
         (index < additionalItemsOnEachSide ||
             index >= listItemsCount - additionalItemsOnEachSide);
+
     final itemStyle =
-        item == widget.selectedItem ? selectedStyle : defaultStyle;
+        item != widget.selectedItem ? selectedStyle : defaultStyle;
 
     final child = isExtra
         ? SizedBox.shrink()
@@ -175,6 +188,9 @@ class _TextPickerState extends State<TextPicker> {
       width: widget.itemWidth,
       height: widget.itemHeight,
       alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 236, 235, 235),
+      ),
       child: child,
     );
   }
