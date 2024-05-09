@@ -1,6 +1,7 @@
 import 'package:alarmduino_upc/ui/components/custom_switch.dart';
 import 'package:alarmduino_upc/ui/components/info_device.dart';
-import 'package:alarmduino_upc/ui/components/list_devices.dart';
+// import 'package:alarmduino_upc/ui/components/list_devices.dart';
+import 'package:alarmduino_upc/ui/components/bluetooth_device.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -33,9 +34,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
   BluetoothConnection? _connection;
   List<BluetoothDevice> _devices = [];
   BluetoothDevice? _deviceConnected;
+
   @override
   void initState() {
     super.initState();
+    _getBluetoothState();
     // Obtenemos el estado del bluetooth
     bluetooth = FlutterBluetoothSerial.instance;
     _bluetoothState = widget.bluetoothState;
@@ -45,11 +48,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
     _deviceConnected = widget.deviceConnected;
   }
 
+  // Método para obtener el estado actual del Bluetooth
+  Future<void> _getBluetoothState() async {
+    bluetooth = FlutterBluetoothSerial.instance;
+    bool isEnabled = await bluetooth.isEnabled;
+    setState(() {
+      _bluetoothState = isEnabled;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      elevation: 0,
       backgroundColor: Colors.white,
       child: ListView(
+        physics:
+            NeverScrollableScrollPhysics(), // Deshabilita el scroll automático
         children: [
           DrawerHeader(
             margin: EdgeInsets.zero,
@@ -66,6 +81,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               child: CustonSwitch(
                 bluetooth: bluetooth,
                 bluetoothState: _bluetoothState,
+                onBluetoothStateChange: (bool value) {
+                  setState(() {
+                    _bluetoothState = value;
+                    print('Bluetooth state: $_bluetoothState');
+                  });
+                },
               ),
             ),
           ),
@@ -78,16 +99,156 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   deviceConnected: _deviceConnected,
                   connection: _connection,
                   bluetooth: bluetooth,
+                  onDevicesVinculed: (List<BluetoothDevice> devices) {
+                    setState(() {
+                      _devices = devices;
+                    });
+                  },
                 ),
-                ListDevices(
-                  bluetooth: bluetooth,
-                  devices: _devices,
-                  isConnecting: _isConnecting,
-                  connection: _connection,
-                ),
+                // detectamos si el bluetooth esta activado
+                Container(
+                    child: _bluetoothState
+                        ? Column(
+                            children: [
+                              //Mostramos la lista de dispositivos vinculados
+                              _devices.length > 0
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                        left: 10,
+                                        right: 10,
+                                        top: 10,
+                                      ),
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        //bordes solo a la izquierda y derecha
+                                        border: Border.all(
+                                          color:
+                                              Color.fromRGBO(218, 216, 216, 1),
+                                          width: 0.5,
+                                        ),
+                                        color: Color.fromRGBO(243, 242, 242, 1),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Dispositivos vinculados',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            height: 150,
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.vertical,
+                                              itemCount: _devices.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  leading: Icon(
+                                                    Icons.bluetooth,
+                                                    color: Colors.blue,
+                                                  ),
+                                                  trailing: Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    color: Colors.black,
+                                                  ),
+                                                  title: Text(
+                                                    _devices[index].name ??
+                                                        'Desconocido',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  subtitle: Text(
+                                                    _devices[index].address,
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    bluetooth.cancelDiscovery();
+                                                    Navigator.pop(context,
+                                                        _devices[index]);
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                              //Mostramos la lista de dispositivos disponibles
+                              Container(
+                                margin: EdgeInsets.only(
+                                  left: 10,
+                                  right: 10,
+                                  top: 5,
+                                ),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Color.fromRGBO(218, 216, 216, 1),
+                                    width: 2,
+                                  ),
+                                  color: Color.fromRGBO(243, 242, 242, 1),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                child: BluetoothDeviceList(
+                                  bluetooth: bluetooth,
+                                  bluetoothState: _bluetoothState,
+                                  isConnecting: _isConnecting,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color.fromRGBO(218, 216, 216, 1),
+                                width: 2,
+                              ),
+                              color: Color.fromRGBO(243, 242, 242, 1),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Text(
+                              'Bluetooth desactivado',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          )),
+
+                // ListDevices(
+                //   bluetooth: bluetooth,
+                //   devices: _devices,
+                //   isConnecting: _isConnecting,
+                //   connection: _connection,
+                // ),
               ],
             ),
-          )
+          ),
+          EndDrawerButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.white),
+              padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+            ),
+          ),
         ],
       ),
     );

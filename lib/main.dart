@@ -7,6 +7,6 @@ void main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  runApp(const App());
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  runApp(App());
 }

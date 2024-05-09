@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -62,12 +62,12 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> views = <Widget>[
-      const AlarmList(),
-      const AlarmSettings(),
+      AlarmList(),
+      AlarmSettings(),
     ];
     return Scaffold(
       //Estilos del panel superior de la aplicacion
-      appBar: const PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(150), // Altura deseada del appbar
         child: CustomAppBar(),
       ),
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
       body: Container(
         // La altura debe ajustarse al tamaño de la pantalla restante
         height: MediaQuery.of(context).size.height - 150,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.white,
         ),
         child: views[_page],
@@ -93,19 +93,22 @@ class _HomeState extends State<Home> {
         index: _selectedIndexList[_page],
         height: 60.0,
         items: <Widget>[
-          const Icon(Icons.alarm_add_sharp, size: 30, color: Colors.white),
+          Icon(Icons.alarm_add_sharp, size: 30, color: Colors.white),
           SvgPicture.asset(
             'assets/svg/settings-alarm.svg',
-            color: Colors.white,
+            colorFilter: ColorFilter.mode(
+              Colors.white,
+              BlendMode.srcIn,
+            ),
             height: 30,
             width: 30,
           ),
         ],
-        color: const Color.fromARGB(255, 42, 141, 38),
-        buttonBackgroundColor: const Color.fromARGB(255, 83, 190, 79),
+        color: Color.fromARGB(255, 42, 141, 38),
+        buttonBackgroundColor: Color.fromARGB(255, 83, 190, 79),
         backgroundColor: Colors.white,
         animationCurve: Curves.easeInOut,
-        animationDuration: const Duration(milliseconds: 300),
+        animationDuration: Duration(milliseconds: 300),
         onTap: (index) {
           setState(() {
             _page = index;

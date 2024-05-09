@@ -15,9 +15,9 @@ class App extends StatelessWidget {
       theme: ThemeData.dark(),
       initialRoute: '/principal',
       routes: {
-        "/": (context) => const IntroSimple(),
+        "/": (context) => IntroSimple(),
         //"/": (context) => const IntroFull(),
-        "/principal": (context) => const Home(),
+        "/principal": (context) => Home(),
       },
     );
   }

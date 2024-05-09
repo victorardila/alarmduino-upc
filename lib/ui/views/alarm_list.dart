@@ -1,21 +1,34 @@
+import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class AlarmList extends StatefulWidget {
-  const AlarmList({Key? key}) : super(key: key);
+  AlarmList({Key? key}) : super(key: key);
 
   @override
   State<AlarmList> createState() => _AlarmListState();
 }
 
 class _AlarmListState extends State<AlarmList> {
+  ControllerAlarm _controllerAlarm = Get.put(ControllerAlarm());
+  List<Map<String, dynamic>> _alarms = [];
   late bool _isExpanded;
+
+  void getAlarms() async {
+    _controllerAlarm.getAlarms().then((value) {
+      setState(() {
+        _alarms = _controllerAlarm.datosAlarms;
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _isExpanded = false;
+    getAlarms();
   }
 
   @override
@@ -34,57 +47,85 @@ class _AlarmListState extends State<AlarmList> {
               children: [
                 Container(
                   height: 30.0,
-                  child: const Text('Lista de alarmas',
-                      style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black)),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 243, 243, 243),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 6.0,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Lista de timbres',
+                          style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
+                    ],
+                  ),
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.68,
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.all(8.0),
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 6.0,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              child: Row(
-                                children: [
-                                  Icon(Icons.alarm,
-                                      color: Colors.black, size: 36.0),
-                                  SizedBox(width: 16.0),
-                                  Text('Alarm ${index + 1}',
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black)),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.delete,
-                                    color: const Color.fromARGB(255, 255, 0, 0),
-                                    size: 36.0))
-                          ],
-                        ),
-                      );
-                    },
+                // Conteedor de la lista de alarmas
+                Expanded(
+                  child: Container(
+                    child: _alarms.isEmpty
+                        ? Center(
+                            child: Text('No hay timbres',
+                                style: TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black)),
+                          )
+                        : ListView.builder(
+                            itemCount: _alarms.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                margin: EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 6.0,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.alarm,
+                                              color: Colors.black, size: 36.0),
+                                          SizedBox(width: 16.0),
+                                          Text(
+                                              '${_alarms[index]['name']} - ${index + 1}',
+                                              style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black)),
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(Icons.delete,
+                                            color:
+                                                Color.fromARGB(255, 255, 0, 0),
+                                            size: 36.0))
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ],
@@ -95,7 +136,7 @@ class _AlarmListState extends State<AlarmList> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
+                  duration: Duration(milliseconds: 300),
                   height: _isExpanded ? 200 : 0,
                   color: Colors.green,
                   child: _isExpanded ? _buildExpandedFabMenu() : null,
@@ -132,11 +173,11 @@ class _AlarmListState extends State<AlarmList> {
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 6.0,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -147,7 +188,7 @@ class _AlarmListState extends State<AlarmList> {
             showDialog(
               context: context,
               builder: (context) {
-                return CustomDialog();
+                return CustomDialog(indexAlarmCurrent: _alarms.length + 1);
               },
             );
             // Handle option 2
@@ -174,7 +215,7 @@ class _AlarmListState extends State<AlarmList> {
               color: Colors.white, size: 36.0), // Aumentado el tamaño del icono
           heroTag: null, // Evita la superposición de botones
         ),
-        const SizedBox(height: 8.0),
+        SizedBox(height: 8.0),
         Text(label,
             style: TextStyle(
                 color: Colors.black,

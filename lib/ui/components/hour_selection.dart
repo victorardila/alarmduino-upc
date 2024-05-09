@@ -3,17 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class HourSelection extends StatefulWidget {
-  HourSelection({super.key});
+  final String timeInitial;
+  final customFormat;
+  final units;
+  final onHourSelected;
+  HourSelection(
+      {super.key,
+      required this.timeInitial,
+      this.customFormat,
+      this.units,
+      this.onHourSelected});
 
   @override
   State<HourSelection> createState() => _HourSelectionState();
 }
 
 class _HourSelectionState extends State<HourSelection> {
+  TextEditingController _timeController = TextEditingController();
+  TextEditingController _hoursController = TextEditingController();
+  TextEditingController _minutosController = TextEditingController();
+  TextEditingController _formatoController = TextEditingController();
+
   var hour = 0;
   var minute = 0;
   var timeFormatIndex = 0;
   final timeFormats = ["PM", "AM"];
+
+  void callbackValueHour(String hourSelected) {
+    widget.onHourSelected(hourSelected);
+  }
 
   String getSelectedTimeFormat(int timeFormatIndex) {
     if (timeFormatIndex == 0) {
@@ -23,6 +41,30 @@ class _HourSelectionState extends State<HourSelection> {
     } else {
       throw Exception("Invalid timeFormatIndex: $timeFormatIndex");
     }
+  }
+
+  void extractTime() {
+    var time = widget.timeInitial.split(" ");
+    var hourMinute = time[0].split(":");
+    hour = int.parse(hourMinute[0]);
+    minute = int.parse(hourMinute[1]);
+    timeFormatIndex = timeFormats.indexOf(time[1]);
+    _hoursController.text = hour.toString();
+    _minutosController.text = minute.toString();
+    widget.customFormat
+        ? _formatoController.text = getSelectedTimeFormat(timeFormatIndex)
+        : _formatoController.text = '';
+    widget.customFormat
+        ? _timeController.text =
+            "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}"
+        : _timeController.text =
+            "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')}";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    extractTime();
   }
 
   @override
@@ -49,7 +91,7 @@ class _HourSelectionState extends State<HourSelection> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")} ${getSelectedTimeFormat(timeFormatIndex)}",
+                  _timeController.text,
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -64,7 +106,7 @@ class _HourSelectionState extends State<HourSelection> {
             height: 20,
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(
                 color: Color.fromARGB(255, 243, 243, 243),
                 borderRadius: BorderRadius.circular(10),
@@ -76,23 +118,38 @@ class _HourSelectionState extends State<HourSelection> {
                   )
                 ]),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                widget.units
+                    ? Text(
+                        "Horas",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.03,
+                          fontFamily: "Roboto",
+                        ),
+                      )
+                    : Container(),
                 NumberPicker(
                   minValue: 0,
                   maxValue: 12,
-                  value: hour,
+                  value: int.parse(_hoursController.text),
                   zeroPad: true,
                   infiniteLoop: true,
                   itemWidth: 80,
                   itemHeight: 60,
                   onChanged: (value) {
                     setState(() {
-                      hour = value;
+                      _hoursController.text = value.toString();
+                      _timeController.text =
+                          "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}";
+                      callbackValueHour(_timeController.text);
                     });
                   },
                   textStyle: TextStyle(
-                      color: Color.fromARGB(255, 36, 35, 35), fontSize: 20),
+                      color: Color.fromARGB(255, 36, 35, 35),
+                      fontSize: MediaQuery.of(context).size.width * 0.04),
                   selectedTextStyle:
                       TextStyle(color: Colors.black, fontSize: 30),
                   decoration: BoxDecoration(
@@ -106,18 +163,22 @@ class _HourSelectionState extends State<HourSelection> {
                 NumberPicker(
                   minValue: 0,
                   maxValue: 59,
-                  value: minute,
+                  value: int.parse(_minutosController.text),
                   zeroPad: true,
                   infiniteLoop: true,
                   itemWidth: 80,
                   itemHeight: 60,
                   onChanged: (value) {
                     setState(() {
-                      minute = value;
+                      _minutosController.text = value.toString();
+                      _timeController.text =
+                          "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? _formatoController.text : ''}";
+                      callbackValueHour(_timeController.text);
                     });
                   },
                   textStyle: TextStyle(
-                      color: Color.fromARGB(255, 36, 35, 35), fontSize: 20),
+                      color: Color.fromARGB(255, 36, 35, 35),
+                      fontSize: MediaQuery.of(context).size.width * 0.04),
                   selectedTextStyle: TextStyle(
                       color: Color.fromARGB(255, 0, 0, 0), fontSize: 30),
                   decoration: BoxDecoration(
@@ -129,29 +190,50 @@ class _HourSelectionState extends State<HourSelection> {
                             BorderSide(color: Color.fromARGB(255, 0, 0, 0))),
                   ),
                 ),
-                TextPicker(
-                  items: timeFormats,
-                  selectedItem: timeFormats[timeFormatIndex],
-                  itemWidth: 80,
-                  itemHeight: 60,
-                  onChanged: (value) {
-                    setState(() {
-                      timeFormatIndex = timeFormats.indexOf(value);
-                    });
-                  },
-                  textStyle: TextStyle(
-                      color: Color.fromARGB(255, 36, 35, 35), fontSize: 20),
-                  selectedTextStyle: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0), fontSize: 30),
-                  decoration: BoxDecoration(
-                    border: Border(
-                        top: BorderSide(
-                          color: Color.fromARGB(255, 0, 0, 0),
+                widget.units
+                    ? Text(
+                        "Minutos",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.03,
+                          fontFamily: "Roboto",
                         ),
-                        bottom:
-                            BorderSide(color: Color.fromARGB(255, 0, 0, 0))),
-                  ),
-                )
+                      )
+                    : Container(),
+                widget.customFormat
+                    ? TextPicker(
+                        items: timeFormats,
+                        selectedItem: _formatoController.text,
+                        itemWidth: MediaQuery.of(context).size.width * 0.15,
+                        itemHeight: 60,
+                        onChanged: (value) {
+                          setState(() {
+                            timeFormatIndex = timeFormats.indexOf(value);
+                            _formatoController.text =
+                                timeFormats[timeFormatIndex];
+                            _timeController.text =
+                                "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}";
+                            callbackValueHour(_timeController.text);
+                          });
+                        },
+                        textStyle: TextStyle(
+                            color: Color.fromARGB(255, 36, 35, 35),
+                            fontSize: MediaQuery.of(context).size.width * 0.04),
+                        selectedTextStyle: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: MediaQuery.of(context).size.width * 0.06,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              bottom: BorderSide(
+                                  color: Color.fromARGB(255, 0, 0, 0))),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           )

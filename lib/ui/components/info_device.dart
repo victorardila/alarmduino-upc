@@ -5,11 +5,13 @@ class InfoDevice extends StatefulWidget {
   final bluetooth;
   final deviceConnected;
   final connection;
-  const InfoDevice({
+  final onDevicesVinculed;
+  InfoDevice({
     super.key,
     this.bluetooth,
     this.deviceConnected,
     this.connection,
+    this.onDevicesVinculed,
   });
 
   @override
@@ -18,13 +20,25 @@ class InfoDevice extends StatefulWidget {
 
 class _InfoDeviceState extends State<InfoDevice> {
   late var _deviceConnected;
+  bool _seeDevices = false;
   List<BluetoothDevice> _devices = [];
   late FlutterBluetoothSerial _bluetooth;
   BluetoothConnection? _connection;
 
   void _getDevices() async {
     var res = await _bluetooth.getBondedDevices();
-    setState(() => _devices = res);
+    _seeDevices = !_seeDevices;
+    if (_seeDevices) {
+      setState(() {
+        _devices = res;
+        widget.onDevicesVinculed(_devices);
+      });
+    } else {
+      setState(() {
+        _devices = [];
+        widget.onDevicesVinculed(_devices);
+      });
+    }
   }
 
   @override
@@ -58,7 +72,7 @@ class _InfoDeviceState extends State<InfoDevice> {
               style: TextStyle(
                 fontSize: 16,
                 color: _deviceConnected?.name != null
-                    ? const Color.fromARGB(255, 43, 184, 48)
+                    ? Color.fromARGB(255, 43, 184, 48)
                     : Color.fromARGB(255, 230, 0,
                         0), // Color para el nombre del dispositivo,
               ),
@@ -69,7 +83,7 @@ class _InfoDeviceState extends State<InfoDevice> {
       trailing: _connection?.isConnected ?? false
           ? TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 230, 0, 0),
+                backgroundColor: Color.fromARGB(255, 230, 0, 0),
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(20), // Radio de borde circular
@@ -81,23 +95,33 @@ class _InfoDeviceState extends State<InfoDevice> {
                 await _connection?.finish();
                 setState(() => _deviceConnected = null);
               },
-              child: const Text("Desconectar"),
+              child: Text("Desconectar"),
             )
           : TextButton(
               onPressed: _getDevices,
               style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 43, 184, 48),
+                backgroundColor: Color.fromARGB(255, 43, 184, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(20), // Radio de borde circular
                 ),
-                textStyle: const TextStyle(fontSize: 18),
+                textStyle: TextStyle(fontSize: 18),
               ),
-              child: const Text(
-                "Ver dispositivos",
-                style: TextStyle(
-                    fontSize: 18, color: Colors.white, fontFamily: 'Poppins'),
-              ),
+              child: _seeDevices
+                  ? Text(
+                      "Ocultar",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'Poppins'),
+                    )
+                  : Text(
+                      "Ver vinculados",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'Poppins'),
+                    ),
             ),
     );
   }

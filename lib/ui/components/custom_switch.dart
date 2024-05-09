@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class CustonSwitch extends StatefulWidget {
   final bluetooth;
   final bluetoothState;
+  final onBluetoothStateChange;
   const CustonSwitch({
     Key? key, // Corrección: "super.key" a "Key? key"
     required this.bluetooth,
     required this.bluetoothState,
+    required this.onBluetoothStateChange,
   }) : super(key: key); // Añadir super(key: key) aquí
 
   @override
@@ -16,6 +18,7 @@ class CustonSwitch extends StatefulWidget {
 class _CustonSwitchState extends State<CustonSwitch> {
   late var _bluetooth;
   bool _bluetoothState = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +38,7 @@ class _CustonSwitchState extends State<CustonSwitch> {
         }
         setState(() {
           _bluetoothState = value;
+          widget.onBluetoothStateChange(value);
         });
       },
       activeColor: Color.fromARGB(255, 71, 52, 243),

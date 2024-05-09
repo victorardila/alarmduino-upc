@@ -1,14 +1,27 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/hour_selection.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+import 'package:get/get.dart';
 
 class CustomDialog extends StatefulWidget {
-  CustomDialog({super.key});
+  final indexAlarmCurrent;
+  CustomDialog({super.key, this.indexAlarmCurrent});
 
   @override
   State<CustomDialog> createState() => _CustomDialogState();
 }
 
 class _CustomDialogState extends State<CustomDialog> {
+  ControllerAlarm _controllerAlarm = Get.put(ControllerAlarm());
+  TextEditingController _indexController = TextEditingController();
+  TextEditingController _nombreController = TextEditingController();
+  TextEditingController _horaController = TextEditingController();
+  TextEditingController _diaController = TextEditingController();
+
+  String time = '00:00 AM';
+  List<String> alarma = [];
   String diaSeleccionado =
       'Lunes'; // Variable de estado para almacenar el valor seleccionado de la valoración
   var dias = <String>[
@@ -20,6 +33,29 @@ class _CustomDialogState extends State<CustomDialog> {
     'Sabado',
     'Domingo'
   ];
+
+  void getHour(String hour) {
+    this.time = hour;
+    setState(() {
+      _horaController.text = hour;
+    });
+  }
+
+  void setAlarm() {
+    alarma[0] = _nombreController.text;
+    alarma[1] = _horaController.text;
+    alarma[2] = _diaController.text;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _indexController.text = '1';
+    _nombreController.text = 'Alarma 1';
+    _horaController.text = '00:00 AM';
+    _diaController.text = 'Lunes';
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -29,11 +65,12 @@ class _CustomDialogState extends State<CustomDialog> {
       backgroundColor: Colors.white,
       title: Container(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Agregar alarma',
+            Text('Agregar timbre',
                 style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
@@ -49,7 +86,9 @@ class _CustomDialogState extends State<CustomDialog> {
                           Navigator.of(context).pop(); // Cerrar el diálogo
                         },
                         child: Text(
-                          '1',
+                          widget.indexAlarmCurrent == null
+                              ? '1'
+                              : widget.indexAlarmCurrent.toString(),
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -77,8 +116,8 @@ class _CustomDialogState extends State<CustomDialog> {
                       width: MediaQuery.of(context).size.width * 0.8,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Color.fromARGB(255, 83, 190,
-                              79), // Puedes cambiar el color del borde aquí
+                          color: Colors.grey
+                              .shade400, // Puedes cambiar el color del borde aquí
                           width: 1.0, // Puedes ajustar el grosor del borde aquí
                         ),
                         color: Colors.white,
@@ -125,46 +164,42 @@ class _CustomDialogState extends State<CustomDialog> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              content: HourSelection(),
+                              content: HourSelection(
+                                  timeInitial: time,
+                                  units: false,
+                                  onHourSelected: getHour,
+                                  customFormat: true),
                               actions: <Widget>[
-                                TextButton(
-                                  child: Container(
-                                    padding: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 83, 190, 79),
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
-                                    child: Text('Cancelar',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Cerrar el diálogo
-                                  },
-                                ),
-                                TextButton(
-                                  child: Container(
-                                      padding: EdgeInsets.all(10.0),
-                                      decoration: BoxDecoration(
-                                        color: Color.fromARGB(255, 83, 190, 79),
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
+                                // Ver los botones en el centro
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextButton(
+                                        child: Container(
+                                            padding: EdgeInsets.all(10.0),
+                                            decoration: BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  255, 83, 190, 79),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
+                                            child: Text('Seleccionar',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ))),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Cerrar el diálogo
+                                        },
                                       ),
-                                      child: Text('Aceptar',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                          ))),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Cerrar el diálogo
-                                  },
-                                ),
+                                    ],
+                                  ),
+                                )
                               ],
                             );
                           },
@@ -181,8 +216,8 @@ class _CustomDialogState extends State<CustomDialog> {
                       width: MediaQuery.of(context).size.width * 0.8,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Color.fromARGB(255, 83, 190,
-                              79), // Puedes cambiar el color del borde aquí
+                          color: Colors.grey
+                              .shade400, // Puedes cambiar el color del borde aquí
                           width: 1.0, // Puedes ajustar el grosor del borde aquí
                         ),
                         color: Colors.white,
@@ -200,7 +235,7 @@ class _CustomDialogState extends State<CustomDialog> {
                         children: [
                           Icon(Icons.alarm, color: Colors.black),
                           SizedBox(width: 10.0),
-                          Text('00:00 AM',
+                          Text(_horaController.text,
                               style: TextStyle(
                                   color: Colors.black, fontSize: 20.0)),
                         ],
@@ -219,8 +254,8 @@ class _CustomDialogState extends State<CustomDialog> {
                       width: MediaQuery.of(context).size.width * 0.8,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Color.fromARGB(255, 83, 190,
-                              79), // Puedes cambiar el color del borde aquí
+                          color: Colors.grey
+                              .shade400, // Puedes cambiar el color del borde aquí
                           width: 1.0, // Puedes ajustar el grosor del borde aquí
                         ),
                         color: Colors.white,
@@ -294,6 +329,9 @@ class _CustomDialogState extends State<CustomDialog> {
           child: Text('Cancelar',
               style: TextStyle(
                 color: Color.fromARGB(255, 83, 190, 79),
+                fontFamily: 'Roboto',
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
               )),
           onPressed: () {
             Navigator.of(context).pop(); // Cerrar el diálogo
@@ -301,9 +339,46 @@ class _CustomDialogState extends State<CustomDialog> {
         ),
         TextButton(
           child: Text('Aceptar',
-              style: TextStyle(color: Color.fromARGB(255, 83, 190, 79))),
+              style: TextStyle(
+                color: Color.fromARGB(255, 83, 190, 79),
+                fontFamily: 'Roboto',
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              )),
           onPressed: () {
-            Navigator.of(context).pop(); // Cerrar el diálogo
+            try {
+              _controllerAlarm.saveAlarm({
+                'id': Uuid().v4(),
+                'name': _nombreController.text,
+                'hour': _horaController.text,
+                'day': _diaController.text,
+              }).then((value) {
+                if (_controllerAlarm.mensajeAlarm == "Guardado correctamente") {
+                  Navigator.of(context).pop();
+                  AwesomeSnackbarContent(
+                    title: 'Alarma guardada correctamente',
+                    titleFontSize: 15.0,
+                    message: 'La alarma se ha guardado correctamente',
+                    contentType: ContentType.success,
+                  );
+                } else {
+                  AwesomeSnackbarContent(
+                    title: 'Error al guardar la alarma',
+                    titleFontSize: 15.0,
+                    message: 'Ha ocurrido un error al guardar la alarma',
+                    contentType: ContentType.failure,
+                  );
+                }
+              });
+            } catch (e) {
+              Navigator.of(context).pop();
+              AwesomeSnackbarContent(
+                title: 'Error al guardar la alarma',
+                titleFontSize: 15.0,
+                message: 'Ha ocurrido un error interno',
+                contentType: ContentType.failure,
+              );
+            }
           },
         ),
       ],

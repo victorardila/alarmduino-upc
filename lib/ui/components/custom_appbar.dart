@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomAppBar extends StatefulWidget {
-  const CustomAppBar({super.key});
+  CustomAppBar({super.key});
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -14,39 +14,43 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
+        preferredSize: Size.fromHeight(50),
         child: Container(
           alignment: Alignment.center,
-          child: const AnimatedText(),
+          child: AnimatedText(connection: false),
         ),
       ),
       toolbarHeight: 150,
       titleSpacing: 0,
       leading: Padding(
-        padding: const EdgeInsets.only(left: 10.0),
+        padding: EdgeInsets.only(left: 10.0),
         child: SizedBox(
             width: 80,
             height: 80,
             child: SvgPicture.asset(
               'assets/svg/svg.svg',
+              colorFilter: ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
             )),
       ),
       title: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           'AlArmDuino \nUPC',
           textAlign: TextAlign.center,
         ),
       ),
-      titleTextStyle: const TextStyle(
+      titleTextStyle: TextStyle(
         color: Colors.white,
         fontSize: 30,
         fontWeight: FontWeight.bold,
       ),
       backgroundColor: Colors.transparent, // Hacer el fondo transparente
       flexibleSpace: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 83, 190, 79),

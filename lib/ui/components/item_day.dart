@@ -4,9 +4,15 @@ class ItemDay extends StatefulWidget {
   final int dia;
   final double alto;
   final double ancho;
+  final Function(int) onDaySelected; // Argumento para la función de selección
 
-  const ItemDay(
-      {super.key, required this.dia, required this.alto, required this.ancho});
+  const ItemDay({
+    Key? key,
+    required this.dia,
+    required this.alto,
+    required this.ancho,
+    required this.onDaySelected, // Incluir en el constructor
+  }) : super(key: key);
 
   @override
   _ItemDayState createState() => _ItemDayState();
@@ -16,7 +22,7 @@ class _ItemDayState extends State<ItemDay> {
   int dia = 0;
   double alto = 0;
   double ancho = 0;
-  String texto = 'Lunes';
+  String texto = '';
   List<String> dias = [
     'Lunes',
     'Martes',
@@ -42,9 +48,9 @@ class _ItemDayState extends State<ItemDay> {
     return GestureDetector(
         onTap: () {
           setState(() {
-            isSelected =
-                !isSelected; // Cambia el estado de seleccionado/no seleccionado al tocar
+            isSelected = !isSelected; // Cambia el estado de selección
           });
+          widget.onDaySelected(widget.dia); // Llama a la función de callback
         },
         child: Container(
           height: alto,
@@ -80,7 +86,7 @@ class _ItemDayState extends State<ItemDay> {
                 color: isSelected
                     ? Colors.white
                     : Color.fromARGB(255, 255, 255, 254),
-                fontSize: 20,
+                fontSize: MediaQuery.of(context).size.width * 0.04,
                 fontFamily: 'Roboto-Regular',
                 fontWeight: FontWeight.bold,
               ),
