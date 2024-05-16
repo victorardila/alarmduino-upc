@@ -67,7 +67,7 @@ class _IntervalsTimeState extends State<IntervalsTime> {
                   'Intervalos de tocada',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: MediaQuery.of(context).size.width * 0.045,
+                    fontSize: MediaQuery.of(context).size.width * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 )

@@ -86,7 +86,7 @@ class _ItemDayState extends State<ItemDay> {
                 color: isSelected
                     ? Colors.white
                     : Color.fromARGB(255, 255, 255, 254),
-                fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontSize: MediaQuery.of(context).size.width * 0.03,
                 fontFamily: 'Roboto-Regular',
                 fontWeight: FontWeight.bold,
               ),

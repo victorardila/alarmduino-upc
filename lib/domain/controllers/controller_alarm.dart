@@ -30,6 +30,12 @@ class ControllerAlarm extends GetxController {
     return _response.value;
   }
 
+  Future<void> deleteAllAlarms() async {
+    _response.value = await StorageAlarm.deleteAllAlarms();
+    await controlAlarm(_response.value);
+    return _response.value;
+  }
+
   Future<void> updateAlarm(Map<String, dynamic> alarm) async {
     _response.value = await StorageAlarm.updateAlarm(alarm);
     await controlAlarm(_response.value);
@@ -37,16 +43,16 @@ class ControllerAlarm extends GetxController {
   }
 
   Future<void> controlAlarm(dynamic respuesta) async {
-    if (respuesta.alarms == null) {
+    if (respuesta == null) {
       _mensaje.value = "Ha ocurrido un error";
       print(_mensaje.value);
     } else {
-      _mensaje.value = respuesta.msg;
-      _Datos.value = respuesta.alarms;
+      _mensaje.value = respuesta['message'];
+      _Datos.value = respuesta['value'];
     }
   }
 
-  List<Map<String, dynamic>> get datosAlarms => _Datos.value ?? [];
+  List<String> get datosAlarms => _Datos.value ?? [];
   dynamic get estadoAlarm => _response.value;
   String get mensajeAlarm => _mensaje.value;
 }

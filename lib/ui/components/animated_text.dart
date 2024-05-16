@@ -67,7 +67,7 @@ class AnimatedTextState extends State<AnimatedText>
                       Text(
                         '<< Device Connected >>',
                         style: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
                           fontFamily: 'LCD',
                           color: Colors.white,
                         ),
@@ -82,13 +82,13 @@ class AnimatedTextState extends State<AnimatedText>
                 )
               : SlideTransition(
                   position: _animacion,
-                  child: const Center(
+                  child: Center(
                     child: Row(
                       children: [
                         Text(
                           '<< No Device Connection >>',
                           style: TextStyle(
-                            fontSize: 20.0,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                             fontFamily: 'LCD',
                             color: Colors.white,
                           ),

@@ -40,6 +40,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
         alignment: Alignment.center,
         child: Text(
           'AlArmDuino \nUPC',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: MediaQuery.of(context).size.width * 0.08,
+            fontWeight: FontWeight.bold,
+          ),
           textAlign: TextAlign.center,
         ),
       ),

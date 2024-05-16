@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/gradient_button.dart';
 import 'package:alarmduino_upc/ui/components/intervals_time.dart';
 import 'package:alarmduino_upc/ui/components/item_day.dart';
 import 'package:alarmduino_upc/ui/components/type_sound.dart';
 import 'package:alarmduino_upc/ui/components/volume_bar.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -34,35 +37,66 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   ];
 
   void setNewAlarm() {
-    selectedDays.forEach((dayIndex) {
-      configuredDays.add({
-        'day': days[dayIndex],
-        'volume': _volumeController.text,
-        'sound': _soundController.text,
-        'intervals': _intervalsController.text,
-      });
-    });
-    _alarms.forEach((alarms) {
-      configuredDays.forEach((element) {
-        if (alarms['day'] == element['day']) {
-          // Armo el nuevo mapa con los datos actualizados
+    if (selectedDays.length > 0) {
+      _alarms.forEach((alarm) {
+        if (selectedDays.contains(days.indexOf(alarm['day']))) {
           Map<String, dynamic> newAlarm = {
-            ...alarms,
-            'volume': element['volume'],
-            'sound': element['sound'],
-            'intervals': element['intervals'],
+            ...alarm,
+            'day': alarm['day'],
+            'volume': _volumeController.text,
+            'sound': _soundController.text,
+            'intervals': _intervalsController.text,
           };
-          // Actualizo el alarm en la base de datos
-          _controllerAlarm.updateAlarm(newAlarm);
+          _controllerAlarm.updateAlarm(newAlarm).then((value) {
+            if (_controllerAlarm.mensajeAlarm.contains('correctamente')) {
+              Navigator.of(context).pop();
+              final snackBar = SnackBar(
+                /// need to set following properties for best effect of awesome_snackbar_content
+                elevation: 0,
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.transparent,
+                content: AwesomeSnackbarContent(
+                  title: 'Alarma modificada correctamente',
+                  titleFontSize: MediaQuery.of(context).size.width * 0.04,
+                  message:
+                      'Se ha modificado la alarma correctamente', // set your message here
+
+                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                  contentType: ContentType.warning,
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else {
+              final snackBar = SnackBar(
+                /// need to set following properties for best effect of awesome_snackbar_content
+                elevation: 0,
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.transparent,
+                content: AwesomeSnackbarContent(
+                  title: 'Error al guardar la alarma',
+                  titleFontSize: MediaQuery.of(context).size.width * 0.04,
+                  message: 'Ha ocurrido un error al guardar la alarma',
+
+                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                  contentType: ContentType.success,
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+          });
         }
       });
-    });
+    }
   }
 
   void getAlarms() async {
     _controllerAlarm.getAlarms().then((value) {
       setState(() {
-        _alarms = _controllerAlarm.datosAlarms;
+        List<String> alarms = _controllerAlarm.datosAlarms;
+        alarms.forEach((alarm) {
+          _alarms.add(jsonDecode(alarm));
+        });
+        print(_alarms);
       });
     });
   }
@@ -124,7 +158,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                   "Configuración de timbre",
                   style: TextStyle(
                     color: Color.fromARGB(255, 255, 255, 254),
-                    fontSize: 20,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
                     fontFamily: 'Italianno-Regular',
                     fontWeight: FontWeight.bold,
                   ),
@@ -149,7 +183,8 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                             "Días de la semana",
                             style: TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 16,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
                               fontFamily: 'Italianno-Regular',
                               fontWeight: FontWeight.bold,
                             ),
@@ -162,7 +197,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                         ],
                       )),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.194,
+                    height: MediaQuery.of(context).size.height * 0.185,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Color.fromRGBO(218, 216, 216, 1),
@@ -217,7 +252,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                           "Configurar timbre",
                           style: TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 16,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                             fontFamily: 'Italianno-Regular',
                             fontWeight: FontWeight.bold,
                           ),
@@ -281,7 +316,10 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                             .join(", "),
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
                                           fontFamily: 'Italianno-Regular',
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -295,7 +333,9 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                       "No hay días seleccionados",
                                       style: TextStyle(
                                         color: Color.fromARGB(255, 0, 0, 0),
-                                        fontSize: 16,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
                                         fontFamily: 'Italianno-Regular',
                                         fontWeight: FontWeight.bold,
                                       ),

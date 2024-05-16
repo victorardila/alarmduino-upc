@@ -95,7 +95,7 @@ class _HourSelectionState extends State<HourSelection> {
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: 26,
+                    fontSize: MediaQuery.of(context).size.width * 0.06,
                     fontFamily: "Roboto",
                   ),
                 ),
