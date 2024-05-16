@@ -4,6 +4,7 @@ class ItemDay extends StatefulWidget {
   final int dia;
   final double alto;
   final double ancho;
+  final daySelected; // Declarar el callback
   final Function(int) onDaySelected; // Argumento para la función de selección
 
   const ItemDay({
@@ -11,6 +12,7 @@ class ItemDay extends StatefulWidget {
     required this.dia,
     required this.alto,
     required this.ancho,
+    this.daySelected, // Incluir en el constructor
     required this.onDaySelected, // Incluir en el constructor
   }) : super(key: key);
 

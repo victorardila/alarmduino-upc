@@ -47,19 +47,19 @@ class _AlarmSettingsState extends State<AlarmSettings> {
             'sound': _soundController.text,
             'intervals': _intervalsController.text,
           };
+          print(newAlarm);
           _controllerAlarm.updateAlarm(newAlarm).then((value) {
             if (_controllerAlarm.mensajeAlarm.contains('correctamente')) {
-              Navigator.of(context).pop();
               final snackBar = SnackBar(
                 /// need to set following properties for best effect of awesome_snackbar_content
                 elevation: 0,
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Colors.transparent,
                 content: AwesomeSnackbarContent(
-                  title: 'Alarma modificada correctamente',
+                  title: 'Timbre modificada correctamente',
                   titleFontSize: MediaQuery.of(context).size.width * 0.04,
                   message:
-                      'Se ha modificado la alarma correctamente', // set your message here
+                      'Se ha modificado la timbre correctamente', // set your message here
 
                   /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
                   contentType: ContentType.warning,
@@ -73,9 +73,9 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Colors.transparent,
                 content: AwesomeSnackbarContent(
-                  title: 'Error al guardar la alarma',
+                  title: 'Error al guardar la timbre',
                   titleFontSize: MediaQuery.of(context).size.width * 0.04,
-                  message: 'Ha ocurrido un error al guardar la alarma',
+                  message: 'Ha ocurrido un error al guardar la timbre',
 
                   /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
                   contentType: ContentType.success,
@@ -218,6 +218,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                           dia: index,
                           alto: MediaQuery.of(context).size.height * 0.123,
                           ancho: MediaQuery.of(context).size.width * 0.3,
+                          daySelected: selectedDays.contains(index),
                           onDaySelected:
                               handleDaySelection, // Paso de la función de selección
                         );
@@ -395,7 +396,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 20),
                                         child: GradientButton(
-                                          text: "Guardar alarma",
+                                          text: "Guardar timbre",
                                           onPressed: () {
                                             setNewAlarm();
                                           },
