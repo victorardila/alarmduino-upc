@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BluetoothDeviceList extends StatefulWidget {
-  final bluetooth;
-  final bluetoothState;
-  final isConnecting;
+  final FlutterBluetoothSerial bluetooth;
+  final Stream<BluetoothState> bluetoothState;
+  final dynamic state;
+  final bool isConnecting;
 
   const BluetoothDeviceList({
     Key? key,
     required this.bluetooth,
     required this.bluetoothState,
+    this.state,
     required this.isConnecting,
   }) : super(key: key);
 
@@ -19,90 +22,131 @@ class BluetoothDeviceList extends StatefulWidget {
 }
 
 class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
-  // List of available Bluetooth devices
-  List<BluetoothDevice> _devicesList = [];
-  // Stream subscription for scanning
-  StreamSubscription<BluetoothDiscoveryResult>? _discoverySubscription;
+  List<BluetoothDevice> _devices = [];
+  late StreamSubscription<BluetoothDiscoveryResult> _streamSubscription;
+  bool _isDiscovering = false;
+  bool _isMounted = false;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _requestBluetoothPermissions() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+      Permission.location,
+    ].request();
 
-    // Check Bluetooth state initially
-    _checkBluetoothState();
+    bool allGranted = statuses.values.every((status) => status.isGranted);
+
+    if (allGranted) {
+      _startDiscovery();
+    } else {
+      print('Permission to connect to Bluetooth devices denied');
+      // You can show a snackbar or dialog to inform the user
+    }
   }
 
-  // Check Bluetooth state and handle permission request if needed
-  void _checkBluetoothState() async {
-    final state = await FlutterBluetoothSerial.instance.state;
+  Future<void> _startDiscovery() async {
+    setState(() {
+      _isDiscovering = true;
+      _devices.clear();
+    });
 
-    if (state == BluetoothState.STATE_OFF) {
-      // Request permission if Bluetooth is off
-      print('Requesting permission to enable Bluetooth...');
-      await FlutterBluetoothSerial.instance.requestEnable();
-    }
-
-    // Start scanning when Bluetooth is on
-    if (state == BluetoothState.STATE_ON) {
-      print('Bluetooth is on, starting to scan for available devices...');
-      _startScanning();
-    }
-
-    // Listen for Bluetooth state changes
-    widget.bluetoothState.listen((state) {
-      if (state == BluetoothState.STATE_ON) {
-        _startScanning();
-      } else {
-        _stopScanning();
+    _streamSubscription = widget.bluetooth.startDiscovery().listen((r) {
+      if (_isMounted) {
         setState(() {
-          _devicesList.clear();
+          _devices.add(r.device);
+          print('Found device: ${r.device.name}');
         });
+      }
+    });
+
+    // Detener la búsqueda después de 5 segundos
+    Future.delayed(Duration(seconds: 5)).then((_) {
+      if (_isMounted) {
+        widget.bluetooth.cancelDiscovery();
+        setState(() {
+          _isDiscovering = false;
+        });
+        print('Discovery stopped');
       }
     });
   }
 
-  // Start scanning for Bluetooth devices
-  void _startScanning() {
-    print('Scanning for available Bluetooth devices...');
-    _discoverySubscription =
-        FlutterBluetoothSerial.instance.startDiscovery().listen((result) {
-      setState(() {
-        _devicesList.add(result.device);
-        print(_devicesList.length);
-      });
-    });
-  }
+  @override
+  void initState() {
+    super.initState();
+    _isMounted = true;
 
-  // Stop scanning for Bluetooth devices
-  void _stopScanning() {
-    _discoverySubscription?.cancel();
+    widget.bluetoothState.listen((state) {
+      if (_isMounted) {
+        if (state == BluetoothState.STATE_ON) {
+          _startDiscovery();
+        } else {
+          _requestBluetoothPermissions();
+        }
+      }
+    });
+
+    // Solicitar permisos al iniciar
+    _requestBluetoothPermissions();
   }
 
   @override
   void dispose() {
-    _stopScanning();
+    _isMounted = false;
+    _streamSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
-      child: ListView.builder(
-        itemCount: _devicesList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_devicesList[index].name ?? 'Unknown Device',
-                style: TextStyle(color: Colors.black)),
-            subtitle: Text(_devicesList[index].address),
-            onTap: () => // Handle tapping on a device (optional)
-                widget.bluetooth.connect(_devicesList[index]).then((value) {
-              if (value) {
-                _stopScanning();
-              }
-            }),
-          );
-        },
+      height: MediaQuery.of(context).size.height * 0.4,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Available devices',
+                  style: TextStyle(fontSize: 16, color: Colors.black)),
+              IconButton(
+                icon: Icon(Icons.refresh, color: Colors.blue),
+                onPressed: () {
+                  _startDiscovery();
+                },
+              ),
+            ],
+          ),
+          _isDiscovering
+              ? Center(child: CircularProgressIndicator())
+              : _devices.isEmpty
+                  ? Center(child: Text('No devices found'))
+                  : Container(
+                      height: 200,
+                      child: ListView.builder(
+                        itemCount: _devices.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: Icon(Icons.devices, color: Colors.blue),
+                            trailing: Icon(
+                              Icons.connect_without_contact,
+                              color: Colors.black,
+                            ),
+                            title: Text(_devices[index].name ?? 'Unknown',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black)),
+                            subtitle: Text(_devices[index].address,
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.grey)),
+                            onTap: () async {
+                              widget.bluetooth.cancelDiscovery();
+                              Navigator.pop(context, _devices[index]);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+        ],
       ),
     );
   }
