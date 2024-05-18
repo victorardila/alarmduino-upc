@@ -56,7 +56,7 @@ class _HourSelectionState extends State<HourSelection> {
         : _formatoController.text = '';
     widget.customFormat
         ? _timeController.text =
-            "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}"
+            "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? time[1] : ''}"
         : _timeController.text =
             "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')}";
   }
@@ -171,8 +171,9 @@ class _HourSelectionState extends State<HourSelection> {
                   onChanged: (value) {
                     setState(() {
                       _minutosController.text = value.toString();
+                      print(timeFormatIndex);
                       _timeController.text =
-                          "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? _formatoController.text : ''}";
+                          "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}";
                       callbackValueHour(_timeController.text);
                     });
                   },

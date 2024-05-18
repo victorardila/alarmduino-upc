@@ -50,8 +50,8 @@ class _CustonSwitchState extends State<CustonSwitch> {
         onPressed: () {},
         icon: Image.asset(
           'assets/img/bluetooth.png',
-          width: 50,
-          height: 50,
+          width: 60,
+          height: 60,
         ),
         label: RichText(
           textAlign: TextAlign.center,

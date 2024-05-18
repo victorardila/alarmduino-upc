@@ -140,12 +140,38 @@ class _AlarmListState extends State<AlarmList> {
                                                 color: Colors.black,
                                                 size: 36.0),
                                             SizedBox(width: 16.0),
-                                            Text(
-                                                '${index + 1} - ${jsonDecode(_alarms[index])['name']}',
+                                            RichText(
+                                              textAlign: TextAlign.center,
+                                              text: TextSpan(
+                                                text: 'Timbre ${index + 1}\n',
                                                 style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black)),
+                                                  color: Colors.black,
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                children: [
+                                                  TextSpan(
+                                                    text: jsonDecode(
+                                                                _alarms[index])[
+                                                            'name'] +
+                                                        ' - ' +
+                                                        jsonDecode(
+                                                                _alarms[index])[
+                                                            'day'] +
+                                                        ' - ' +
+                                                        jsonDecode(
+                                                                _alarms[index])[
+                                                            'hour'],
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),

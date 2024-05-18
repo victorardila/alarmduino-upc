@@ -107,8 +107,11 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Available devices',
-                  style: TextStyle(fontSize: 16, color: Colors.black)),
+              Text('Dispositivos disponibles',
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black)),
               IconButton(
                 icon: Icon(Icons.refresh, color: Colors.blue),
                 onPressed: () {
@@ -120,7 +123,9 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
           _isDiscovering
               ? Center(child: CircularProgressIndicator())
               : _devices.isEmpty
-                  ? Center(child: Text('No devices found'))
+                  ? Center(
+                      child: Text('No devices found',
+                          style: TextStyle(fontSize: 16, color: Colors.black)))
                   : Container(
                       height: 200,
                       child: ListView.builder(

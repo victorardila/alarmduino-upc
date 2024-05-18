@@ -65,7 +65,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       elevation: 0,
       backgroundColor: Color.fromARGB(255, 74, 175, 70),
       child: Container(
-        margin: EdgeInsets.only(top: 40),
+        margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         color: Colors.white.withOpacity(0.9),
         child: ListView(
           padding: EdgeInsets.zero,
@@ -141,15 +141,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                           children: [
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  'Dispositivos vinculados',
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
+                                                Text('Dispositivos vinculados',
+                                                    style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.04,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black)),
                                               ],
                                             ),
                                             Container(
