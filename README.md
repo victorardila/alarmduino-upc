@@ -11,7 +11,7 @@
 
 El proyecto Alarmduino es una solución desarrollada con Flutter y Arduino que tiene como objetivo gestionar el timbre en entornos educativos, como colegios. Permite configurar las horas de timbrado, los intervalos entre timbres, los días en los que se activa el timbre, y proporciona la capacidad de asignar etiquetas o nombres a cada timbre para una identificación más clara. Esta solución interactúa directamente con un Arduino Uno que contiene el circuito necesario para controlar el timbre de manera automática y precisa según la configuración establecida.
 
-<img src="https://github.com/Valfonsoardila10/AlArmDuino-UPC/assets/106699036/61a01307-b83a-4bfc-8735-9f3a241a1ed2.png" width="600" height="300">
+<img src="https://github.com/Valfonsoardila10/AlArmDuino-UPC/assets/106699036/61a01307-b83a-4bfc-8735-9f3a241a1ed2.png" width="600" height="350">
 
 ## Requisitos Previos
 
