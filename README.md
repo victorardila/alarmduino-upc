@@ -1,5 +1,4 @@
-# Título del Proyecto
-## **AlarmDuino UPC**
+# **AlarmDuino UPC**
 
 ## **Table of Contents**
 - [Descripcion General](#descripcion)
