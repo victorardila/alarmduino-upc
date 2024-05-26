@@ -4,11 +4,17 @@ class CustonSwitch extends StatefulWidget {
   final bluetooth;
   final bluetoothState;
   final onBluetoothStateChange;
+  final icon;
+  final label;
+  final logoMode;
   const CustonSwitch({
     Key? key, // Corrección: "super.key" a "Key? key"
     required this.bluetooth,
     required this.bluetoothState,
     required this.onBluetoothStateChange,
+    required this.icon,
+    required this.label,
+    required this.logoMode,
   }) : super(key: key); // Añadir super(key: key) aquí
 
   @override
@@ -46,41 +52,44 @@ class _CustonSwitchState extends State<CustonSwitch> {
       activeTrackColor: Colors.white,
       inactiveTrackColor: Color.fromARGB(255, 105, 147, 238),
       tileColor: Colors.black26,
-      title: TextButton.icon(
-        onPressed: () {},
-        icon: Image.asset(
-          'assets/img/bluetooth.png',
-          width: 60,
-          height: 60,
-        ),
-        label: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: 16,
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.w700,
-            ),
-            children: [
-              TextSpan(
-                text: 'Bluetooth ',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                  color: Colors.black,
+      title: widget.logoMode
+          ? TextButton.icon(
+              onPressed: () {},
+              icon: Image.asset(
+                'assets/img/bluetooth.png',
+                width: 60,
+                height: 60,
+              ),
+              label: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w700,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'Bluetooth ',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.05,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                        color: Colors.black,
+                      ),
+                    ),
+                    TextSpan(
+                      text: _bluetoothState ? 'Activado' : 'Desactivado',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.05,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              TextSpan(
-                text: _bluetoothState ? 'Activado' : 'Desactivado',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : Container(),
       thumbColor: MaterialStateProperty.resolveWith<Color>(
         (Set<MaterialState> states) {
           if (states.contains(MaterialState.selected)) {
@@ -104,7 +113,7 @@ class _CustonSwitchState extends State<CustonSwitch> {
       // Agregar textura al toggle con BoxDecoration
       dense: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       mouseCursor: MaterialStateMouseCursor.clickable,

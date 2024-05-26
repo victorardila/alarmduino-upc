@@ -105,11 +105,11 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text('Dispositivos disponibles',
                   style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontSize: MediaQuery.of(context).size.width * 0.03,
                       fontWeight: FontWeight.bold,
                       color: Colors.black)),
               IconButton(

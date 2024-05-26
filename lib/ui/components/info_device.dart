@@ -111,16 +111,16 @@ class _InfoDeviceState extends State<InfoDevice> {
                 ),
                 child: _seeDevices
                     ? Text(
-                        "Ocultar",
+                        "Ocultar vinculados",
                         style: TextStyle(
-                            fontSize: 14,
+                            fontSize: MediaQuery.of(context).size.width * 0.032,
                             color: Colors.white,
                             fontFamily: 'Poppins'),
                       )
                     : Text(
                         "Ver vinculados",
                         style: TextStyle(
-                            fontSize: 14,
+                            fontSize: MediaQuery.of(context).size.width * 0.032,
                             color: Colors.white,
                             fontFamily: 'Poppins'),
                       ),
