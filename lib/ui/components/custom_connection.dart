@@ -285,12 +285,18 @@ class _CustomConnectionState extends State<CustomConnection> {
                                     : Container(
                                         margin: EdgeInsets.all(10),
                                         padding: EdgeInsets.all(10),
-                                        child: Text(
-                                          'Bluetooth desactivado',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Bluetooth desactivado',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                           )
