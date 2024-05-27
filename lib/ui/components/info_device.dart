@@ -19,7 +19,7 @@ class InfoDevice extends StatefulWidget {
 }
 
 class _InfoDeviceState extends State<InfoDevice> {
-  late var _deviceConnected;
+  var _deviceConnected;
   bool _seeDevices = false;
   List<BluetoothDevice> _devices = [];
   late FlutterBluetoothSerial _bluetooth;
@@ -40,13 +40,18 @@ class _InfoDeviceState extends State<InfoDevice> {
       });
     }
   }
-
+  void getConnecteDevice(){
+    setState(() {
+      _deviceConnected = widget.deviceConnected;
+    });
+  }
   @override
   void initState() {
     super.initState();
     _getDevices();
+    print("Hola");
     _bluetooth = widget.bluetooth;
-    _deviceConnected = widget.deviceConnected;
+    getConnecteDevice();
     _connection = widget.connection;
   }
 
@@ -71,13 +76,12 @@ class _InfoDeviceState extends State<InfoDevice> {
                         ),
               ),
               TextSpan(
-                text: '${_deviceConnected?.name ?? "Ninguno"}',
+                text: '${_deviceConnected ?? "Ninguno"}',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: _deviceConnected?.name != null
+                  fontSize: MediaQuery.of(context).size.height*0.025,
+                  color: _deviceConnected != null
                       ? Color.fromARGB(255, 43, 184, 48)
-                      : Color.fromARGB(255, 230, 0,
-                          0), // Color para el nombre del dispositivo,
+                      : Color.fromARGB(255, 159, 28, 28), // Color para el nombre del dispositivo,
                 ),
               ),
             ],

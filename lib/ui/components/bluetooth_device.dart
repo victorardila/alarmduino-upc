@@ -8,14 +8,15 @@ class BluetoothDeviceList extends StatefulWidget {
   final Stream<BluetoothState> bluetoothState;
   final dynamic state;
   final bool isConnecting;
-
-  const BluetoothDeviceList({
-    Key? key,
-    required this.bluetooth,
-    required this.bluetoothState,
-    this.state,
-    required this.isConnecting,
-  }) : super(key: key);
+  final onConnectedDevice;
+  const BluetoothDeviceList(
+      {Key? key,
+      required this.bluetooth,
+      required this.bluetoothState,
+      this.state,
+      required this.isConnecting,
+      this.onConnectedDevice})
+      : super(key: key);
 
   @override
   _BluetoothDeviceListState createState() => _BluetoothDeviceListState();
@@ -24,6 +25,8 @@ class BluetoothDeviceList extends StatefulWidget {
 class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
   List<BluetoothDevice> _devices = [];
   late StreamSubscription<BluetoothDiscoveryResult> _streamSubscription;
+  BluetoothDevice?
+      _connectedDevice; // Variable para almacenar el dispositivo conectado
   bool _isDiscovering = false;
   bool _isMounted = false;
 
@@ -70,6 +73,24 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
         print('Discovery stopped');
       }
     });
+  }
+
+  Future<void> _connectToDevice(BluetoothDevice device) async {
+    try {
+      await widget.bluetooth.connect(device).then((value) => {
+            // La conexión fue exitosa, guardamos el dispositivo conectado
+            setState(() {
+              _connectedDevice = device;
+            }),
+            _callBackConnectedDevice(device)
+          });
+    } catch (e) {
+      _callBackConnectedDevice(null);
+    }
+  }
+
+  void _callBackConnectedDevice(BluetoothDevice? device) async {
+     widget.onConnectedDevice(device);
   }
 
   @override
@@ -145,7 +166,8 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
                                     fontSize: 12, color: Colors.grey)),
                             onTap: () async {
                               widget.bluetooth.cancelDiscovery();
-                              Navigator.pop(context, _devices[index]);
+                              await _connectToDevice(_devices[index]);
+                              // Puedes realizar cualquier acción adicional después de la conexión
                             },
                           );
                         },

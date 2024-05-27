@@ -34,7 +34,7 @@ class _CustomConnectionState extends State<CustomConnection> {
   bool _isConnecting = false;
   BluetoothConnection? _connection;
   List<BluetoothDevice> _devices = [];
-  BluetoothDevice? _deviceConnected;
+  var _deviceConnected;
   late Stream<BluetoothState> _bluetoothState;
 
   // Método para obtener el estado actual del Bluetooth
@@ -43,6 +43,13 @@ class _CustomConnectionState extends State<CustomConnection> {
     bool isEnabled = await bluetooth.isEnabled;
     setState(() {
       state = isEnabled;
+    });
+  }
+  // Metodo para obtener el dispositivo conectado
+  void getConnectedDevice(device) async{
+    setState(() {
+      _deviceConnected=device.name;
+      print("Este es el dipositivo: ${_deviceConnected}");
     });
   }
 
@@ -58,7 +65,6 @@ class _CustomConnectionState extends State<CustomConnection> {
     _connection = widget.connection;
     _devices = widget.devices;
     print('Devices: $_devices');
-    _deviceConnected = widget.deviceConnected;
     //Inicializamos labelStrings
     labelStrings = [
       {
@@ -276,6 +282,7 @@ class _CustomConnectionState extends State<CustomConnection> {
                                                       _bluetoothState,
                                                   state: state,
                                                   isConnecting: _isConnecting,
+                                                  onConnectedDevice:getConnectedDevice,
                                                 ),
                                               ),
                                             ],
@@ -293,7 +300,7 @@ class _CustomConnectionState extends State<CustomConnection> {
                                               'Bluetooth desactivado',
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 16,
+                                                fontSize: MediaQuery.of(context).size.height * 0.01,
                                               ),
                                             ),
                                           ],
