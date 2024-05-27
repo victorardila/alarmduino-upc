@@ -1,5 +1,6 @@
 import 'package:alarmduino_upc/ui/components/bluetooth_device.dart';
 import 'package:alarmduino_upc/ui/components/custom_switch.dart';
+import 'package:alarmduino_upc/ui/components/info_device.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -80,180 +81,228 @@ class _CustomConnectionState extends State<CustomConnection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: Expanded(
-        child: ListView.builder(
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return InkWell(
-              child: Container(
-                margin: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                ),
-                child: ExpansionTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Image.asset(
-                        labelStrings[index]['img'],
-                        width: 30,
-                        height: 30,
+      child: Column(
+        children: [
+          Container(
+            child: InfoDevice(
+              deviceConnected: _deviceConnected,
+              connection: _connection,
+              bluetooth: bluetooth,
+              onDevicesVinculed: (List<BluetoothDevice> devices) {
+                setState(() {
+                  _devices = devices;
+                });
+              },
+            ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Expanded(
+              child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 6.0,
+                          ),
+                        ],
                       ),
-                      Text(
-                        labelStrings[index]['label'],
-                        style: TextStyle(
-                          color: labelStrings[index]['color'],
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                      child: ExpansionTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Image.asset(
+                              labelStrings[index]['img'],
+                              width: 30,
+                              height: 30,
+                            ),
+                            Text(
+                              labelStrings[index]['label'],
+                              style: TextStyle(
+                                color: labelStrings[index]['color'],
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 20,
+                              child: CustonSwitch(
+                                icon: false,
+                                label: false,
+                                logoMode: false,
+                                bluetooth: bluetooth,
+                                bluetoothState: state,
+                                onBluetoothStateChange: (bool value) {
+                                  setState(() {
+                                    state = value;
+                                    _bluetoothState =
+                                        bluetooth.onStateChanged();
+                                  });
+                                },
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                        child: CustonSwitch(
-                          icon: false,
-                          label: false,
-                          logoMode: false,
-                          bluetooth: bluetooth,
-                          bluetoothState: state,
-                          onBluetoothStateChange: (bool value) {
-                            setState(() {
-                              state = value;
-                              _bluetoothState = bluetooth.onStateChanged();
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.42,
-                      width: MediaQuery.of(context).size.width,
-                      child: // detectamos si el bluetooth esta activado
-                          state
-                              ? SingleChildScrollView(
-                                  child: Container(
-                                    child: Column(
-                                      children: [
-                                        //Mostramos la lista de dispositivos vinculados
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 10,
-                                          ),
-                                          padding: EdgeInsets.all(10),
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.42,
+                            width: MediaQuery.of(context).size.width,
+                            child: // detectamos si el bluetooth esta activado
+                                state
+                                    ? SingleChildScrollView(
+                                        child: Container(
                                           child: Column(
                                             children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                      'Dispositivos vinculados',
-                                                      style: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.03,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black)),
-                                                ],
-                                              ),
+                                              //Mostramos la lista de dispositivos vinculados
+                                              _devices.length > 0
+                                                  ? Container(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 10,
+                                                      ),
+                                                      padding:
+                                                          EdgeInsets.all(10),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                  'Dispositivos vinculados',
+                                                                  style: TextStyle(
+                                                                      fontSize: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.03,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Colors
+                                                                          .black)),
+                                                            ],
+                                                          ),
+                                                          Container(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height /
+                                                                6,
+                                                            child: ListView
+                                                                .builder(
+                                                              scrollDirection:
+                                                                  Axis.vertical,
+                                                              itemCount:
+                                                                  _devices
+                                                                      .length,
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                return ListTile(
+                                                                  leading: Icon(
+                                                                    Icons
+                                                                        .bluetooth,
+                                                                    color: Colors
+                                                                        .blue,
+                                                                  ),
+                                                                  trailing:
+                                                                      Icon(
+                                                                    Icons
+                                                                        .arrow_forward_ios,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  title: Text(
+                                                                    _devices[index]
+                                                                            .name ??
+                                                                        'Desconocido',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
+                                                                  subtitle:
+                                                                      Text(
+                                                                    _devices[
+                                                                            index]
+                                                                        .address,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    bluetooth
+                                                                        .cancelDiscovery();
+                                                                    Navigator.pop(
+                                                                        context,
+                                                                        _devices[
+                                                                            index]);
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                              //Mostramos la lista de dispositivos disponibles
                                               Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    6,
-                                                child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount: _devices.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return ListTile(
-                                                      leading: Icon(
-                                                        Icons.bluetooth,
-                                                        color: Colors.blue,
-                                                      ),
-                                                      trailing: Icon(
-                                                        Icons.arrow_forward_ios,
-                                                        color: Colors.black,
-                                                      ),
-                                                      title: Text(
-                                                        _devices[index].name ??
-                                                            'Desconocido',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      subtitle: Text(
-                                                        _devices[index].address,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        bluetooth
-                                                            .cancelDiscovery();
-                                                        Navigator.pop(context,
-                                                            _devices[index]);
-                                                      },
-                                                    );
-                                                  },
+                                                margin: EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 5,
+                                                ),
+                                                padding: EdgeInsets.all(10),
+                                                child: BluetoothDeviceList(
+                                                  bluetooth: bluetooth,
+                                                  bluetoothState:
+                                                      _bluetoothState,
+                                                  state: state,
+                                                  isConnecting: _isConnecting,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        //Mostramos la lista de dispositivos disponibles
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 5,
-                                          ),
-                                          padding: EdgeInsets.all(10),
-                                          child: BluetoothDeviceList(
-                                            bluetooth: bluetooth,
-                                            bluetoothState: _bluetoothState,
-                                            state: state,
-                                            isConnecting: _isConnecting,
+                                      )
+                                    : Container(
+                                        margin: EdgeInsets.all(10),
+                                        padding: EdgeInsets.all(10),
+                                        child: Text(
+                                          'Bluetooth desactivado',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  margin: EdgeInsets.all(10),
-                                  padding: EdgeInsets.all(10),
-                                  child: Text(
-                                    'Bluetooth desactivado',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                    )
-                  ],
-                ),
+                                      ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

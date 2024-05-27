@@ -44,6 +44,7 @@ class _InfoDeviceState extends State<InfoDevice> {
   @override
   void initState() {
     super.initState();
+    _getDevices();
     _bluetooth = widget.bluetooth;
     _deviceConnected = widget.deviceConnected;
     _connection = widget.connection;
