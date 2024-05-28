@@ -6,13 +6,14 @@ class InfoDevice extends StatefulWidget {
   final deviceConnected;
   final connection;
   final onDevicesVinculed;
-  InfoDevice({
-    super.key,
-    this.bluetooth,
-    this.deviceConnected,
-    this.connection,
-    this.onDevicesVinculed,
-  });
+  final onDeviceConnected;
+  InfoDevice(
+      {super.key,
+      this.bluetooth,
+      this.deviceConnected,
+      this.connection,
+      this.onDevicesVinculed,
+      this.onDeviceConnected});
 
   @override
   State<InfoDevice> createState() => _InfoDeviceState();
@@ -40,19 +41,34 @@ class _InfoDeviceState extends State<InfoDevice> {
       });
     }
   }
-  void getConnecteDevice(){
+
+  void getConnectedDevice() {
     setState(() {
       _deviceConnected = widget.deviceConnected;
+      print("Esta es el dispositivo en el Info: ${_deviceConnected}");
     });
   }
+
+  void getConnection() {
+    setState(() {
+      _connection = widget.connection;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _getDevices();
-    print("Hola");
+    _deviceConnected = "";
     _bluetooth = widget.bluetooth;
-    getConnecteDevice();
-    _connection = widget.connection;
+    getConnectedDevice();
+    getConnection();
+  }
+
+  @override
+  void didUpdateWidget(InfoDevice oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    getConnectedDevice();
+    getConnection();
   }
 
   @override
@@ -76,60 +92,44 @@ class _InfoDeviceState extends State<InfoDevice> {
                         ),
               ),
               TextSpan(
-                text: '${_deviceConnected ?? "Ninguno"}',
+                text: _deviceConnected != "" && _connection?.isConnected != false ? _deviceConnected : "Ninguno",
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height*0.025,
-                  color: _deviceConnected != null
+                  fontSize: MediaQuery.of(context).size.height * 0.025,
+                  color: _deviceConnected != ""
                       ? Color.fromARGB(255, 43, 184, 48)
-                      : Color.fromARGB(255, 159, 28, 28), // Color para el nombre del dispositivo,
+                      : Color.fromARGB(255, 159, 28,
+                          28), // Color para el nombre del dispositivo,
                 ),
               ),
             ],
           ),
         ),
-        trailing: _connection?.isConnected ?? false
-            ? TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 230, 0, 0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20), // Radio de borde circular
-                  ),
-                  textStyle: TextStyle(
-                      fontSize: 18, color: Colors.white, fontFamily: 'Poppins'),
+        trailing: TextButton(
+          onPressed: _getDevices,
+          style: TextButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 43, 184, 48),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(20), // Radio de borde circular
+            ),
+            textStyle: TextStyle(fontSize: 18),
+          ),
+          child: _seeDevices
+              ? Text(
+                  "Ocultar vinculados",
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.032,
+                      color: Colors.white,
+                      fontFamily: 'Poppins'),
+                )
+              : Text(
+                  "Ver vinculados",
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.032,
+                      color: Colors.white,
+                      fontFamily: 'Poppins'),
                 ),
-                onPressed: () async {
-                  await _connection?.finish();
-                  setState(() => _deviceConnected = null);
-                },
-                child: Text("Desconectar"),
-              )
-            : TextButton(
-                onPressed: _getDevices,
-                style: TextButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 43, 184, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20), // Radio de borde circular
-                  ),
-                  textStyle: TextStyle(fontSize: 18),
-                ),
-                child: _seeDevices
-                    ? Text(
-                        "Ocultar vinculados",
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.032,
-                            color: Colors.white,
-                            fontFamily: 'Poppins'),
-                      )
-                    : Text(
-                        "Ver vinculados",
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.032,
-                            color: Colors.white,
-                            fontFamily: 'Poppins'),
-                      ),
-              ),
+        ),
       ),
     );
   }

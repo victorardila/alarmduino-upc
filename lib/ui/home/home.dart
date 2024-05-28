@@ -36,6 +36,13 @@ class _HomeState extends State<Home> {
     await Permission.bluetoothConnect.request();
   }
 
+  void getConnection(BluetoothConnection connection) {
+    setState(() {
+      this._connection=connection;
+    });
+    print("Esta es la conexionn blue en el home ${connection}");
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,7 +69,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> views = <Widget>[
-      AlarmList(),
+      AlarmList(connection:_connection),
       AlarmSettings(),
     ];
     return Scaffold(
@@ -78,6 +85,7 @@ class _HomeState extends State<Home> {
         deviceConnected: _deviceConnected,
         isConnecting: _isConnecting,
         connection: _connection,
+        onBluetoothConnection: getConnection
       ),
       body: Container(
         // La altura debe ajustarse al tamaño de la pantalla restante

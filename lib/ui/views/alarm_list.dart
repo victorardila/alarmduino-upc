@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/custom_dialog.dart';
@@ -7,7 +8,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class AlarmList extends StatefulWidget {
-  AlarmList({Key? key}) : super(key: key);
+  final connection;
+  AlarmList({Key? key, this.connection}) : super(key: key);
 
   @override
   State<AlarmList> createState() => _AlarmListState();
@@ -16,6 +18,7 @@ class AlarmList extends StatefulWidget {
 class _AlarmListState extends State<AlarmList> {
   ControllerAlarm _controllerAlarm = Get.put(ControllerAlarm());
   List<String> _alarms = [];
+  List<String> messages = [];
   late bool _isExpanded;
 
   void getAlarms() async {
@@ -38,6 +41,18 @@ class _AlarmListState extends State<AlarmList> {
     _controllerAlarm.deleteAllAlarms().then((value) {
       getAlarms();
     });
+  }
+
+  sendbluetooth(String message) {
+    if (widget.connection != null) {
+      widget.connection!.output.add(utf8.encode(message + "\n"));
+      setState(() {
+        messages.add("Sent: $message");
+        print("mensaje enviado");
+      });
+    } else {
+      print("Conexion invalida");
+    }
   }
 
   @override
@@ -249,6 +264,7 @@ class _AlarmListState extends State<AlarmList> {
         children: [
           _buildFabOption(FontAwesomeIcons.bellConcierge, 'Test', () {
             // Handle option 1
+            sendbluetooth("E");
           }),
           _buildFabOption(Icons.alarm_add, 'Agregar', () {
             showDialog(

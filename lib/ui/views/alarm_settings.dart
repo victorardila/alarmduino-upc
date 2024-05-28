@@ -43,7 +43,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
           Map<String, dynamic> newAlarm = {
             ...alarm,
             'day': alarm['day'],
-            'volume': _volumeController.text,
+            // 'volume': _volumeController.text,
             'sound': _soundController.text,
             'intervals': _intervalsController.text,
           };
@@ -347,23 +347,23 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                 child: Container(
                                   child: Column(
                                     children: [
-                                      VolumeBar(
-                                        colorBar:
-                                            Color.fromARGB(255, 74, 175, 70),
-                                        titleVisible: true,
-                                        margin: true,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.9,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.08,
-                                        initialValue: double.parse(
-                                            _volumeController.text),
-                                        onVolumeChanged: (value) {
-                                          print(value);
-                                        },
-                                      ),
+                                      // VolumeBar(
+                                      //   colorBar:
+                                      //       Color.fromARGB(255, 74, 175, 70),
+                                      //   titleVisible: true,
+                                      //   margin: true,
+                                      //   width:
+                                      //       MediaQuery.of(context).size.width *
+                                      //           0.9,
+                                      //   height:
+                                      //       MediaQuery.of(context).size.height *
+                                      //           0.08,
+                                      //   initialValue: double.parse(
+                                      //       _volumeController.text),
+                                      //   onVolumeChanged: (value) {
+                                      //     print(value);
+                                      //   },
+                                      // ),
                                       TypeSound(
                                         titleVisible: true,
                                         margin: true,

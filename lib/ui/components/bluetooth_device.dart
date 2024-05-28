@@ -8,6 +8,7 @@ class BluetoothDeviceList extends StatefulWidget {
   final Stream<BluetoothState> bluetoothState;
   final dynamic state;
   final bool isConnecting;
+  final onBluetoothConnection;
   final onConnectedDevice;
   const BluetoothDeviceList(
       {Key? key,
@@ -15,6 +16,7 @@ class BluetoothDeviceList extends StatefulWidget {
       required this.bluetoothState,
       this.state,
       required this.isConnecting,
+      this.onBluetoothConnection,
       this.onConnectedDevice})
       : super(key: key);
 
@@ -77,20 +79,20 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
 
   Future<void> _connectToDevice(BluetoothDevice device) async {
     try {
-      await widget.bluetooth.connect(device).then((value) => {
-            // La conexión fue exitosa, guardamos el dispositivo conectado
-            setState(() {
-              _connectedDevice = device;
-            }),
-            _callBackConnectedDevice(device)
-          });
+      BluetoothConnection connection = await BluetoothConnection.toAddress(device.address);
+      print("Esta es la conexionn blue en el device ${connection}");
+      setState(() {
+        _connectedDevice = device;
+      });
+      _callBackConnectedDevice(_connectedDevice, connection);
     } catch (e) {
-      _callBackConnectedDevice(null);
+      _callBackConnectedDevice(null, null);
     }
   }
 
-  void _callBackConnectedDevice(BluetoothDevice? device) async {
-     widget.onConnectedDevice(device);
+ void _callBackConnectedDevice(BluetoothDevice? device, BluetoothConnection? connection) async {
+    widget.onConnectedDevice(device);
+    widget.onBluetoothConnection(connection);
   }
 
   @override
@@ -167,7 +169,6 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
                             onTap: () async {
                               widget.bluetooth.cancelDiscovery();
                               await _connectToDevice(_devices[index]);
-                              // Puedes realizar cualquier acción adicional después de la conexión
                             },
                           );
                         },

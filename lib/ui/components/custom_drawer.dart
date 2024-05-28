@@ -1,5 +1,6 @@
 import 'package:alarmduino_upc/ui/components/custom_connection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 // import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -9,6 +10,7 @@ class CustomDrawer extends StatefulWidget {
   final deviceConnected;
   final isConnecting;
   final connection;
+  final onBluetoothConnection;
   const CustomDrawer({
     super.key,
     this.bluetooth,
@@ -17,6 +19,7 @@ class CustomDrawer extends StatefulWidget {
     this.deviceConnected,
     this.isConnecting,
     this.connection,
+    this.onBluetoothConnection
   });
 
   @override
@@ -24,6 +27,19 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
+  BluetoothConnection? _connection;
+
+  void getConnection(BluetoothConnection connection) {
+    setState(() {
+      this._connection=connection;
+    });
+    _callBackConnectedDevice(_connection!);
+    print("Esta es la conexionn blue en el drawer ${connection}");
+  }
+
+  void _callBackConnectedDevice(BluetoothConnection connection) async {
+    widget.onBluetoothConnection(connection);
+  }
   @override
   void initState() {
     super.initState();
@@ -100,6 +116,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               deviceConnected: widget.deviceConnected,
               isConnecting: widget.isConnecting,
               connection: widget.connection,
+              onBluetoothConnection:getConnection
             ),
             // Container(
             //   height: MediaQuery.of(context).size.height,
