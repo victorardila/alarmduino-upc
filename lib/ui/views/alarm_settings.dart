@@ -46,6 +46,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   // formatear hora al formato militar
   String formedtime() {
     String time = _horaController.text;
+    print(time);
     String hour = time.split(":")[0];
     String minutes = time.split(":")[1].split(" ")[0];
     String ampm = time.split(":")[1].split(" ")[1];
