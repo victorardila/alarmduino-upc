@@ -6,6 +6,7 @@ class TypeSound extends StatefulWidget {
   final double width;
   final double height;
   final double initialValue;
+  final onSoundSelected;
 
   TypeSound({
     Key? key,
@@ -14,6 +15,7 @@ class TypeSound extends StatefulWidget {
     required this.width,
     required this.height,
     required this.initialValue,
+    this.onSoundSelected,
   }) : super(key: key);
 
   @override
@@ -22,6 +24,11 @@ class TypeSound extends StatefulWidget {
 
 class _TypeSoundState extends State<TypeSound> {
   String? selectedSound;
+
+  // callback function para retornar el valor seleccionado
+  void callbackreturnsound() {
+    widget.onSoundSelected(selectedSound);
+  }
 
   @override
   void initState() {

@@ -11,6 +11,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 
 class AlarmSettings extends StatefulWidget {
   final connection;
@@ -28,8 +29,8 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   TextEditingController _soundController = TextEditingController();
   TextEditingController _intervalsController = TextEditingController();
   TextEditingController _horaController = TextEditingController();
-  List<Map<String, dynamic>> _alarms = [];
   List<int> selectedDays = [];
+  List<String> messages = [];
   List<Map<String, dynamic>> configuredDays = [];
   String time = '00:00 AM';
   List<String> days = [
@@ -42,79 +43,92 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     'Domingo'
   ];
 
-  void setNewAlarm() {
-    if (selectedDays.length > 0) {
-      _alarms.forEach((alarm) {
-        if (selectedDays.contains(days.indexOf(alarm['day']))) {
-          Map<String, dynamic> newAlarm = {
-            ...alarm,
-            'day': alarm['day'],
-            // 'volume': _volumeController.text,
-            'sound': _soundController.text,
-            'intervals': _intervalsController.text,
-          };
-          print(newAlarm);
-          _controllerAlarm.updateAlarm(newAlarm).then((value) {
-            if (_controllerAlarm.mensajeAlarm.contains('correctamente')) {
-              final snackBar = SnackBar(
-                /// need to set following properties for best effect of awesome_snackbar_content
-                elevation: 0,
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: Colors.transparent,
-                content: AwesomeSnackbarContent(
-                  title: 'Timbre modificada correctamente',
-                  titleFontSize: MediaQuery.of(context).size.width * 0.04,
-                  message:
-                      'Se ha modificado la timbre correctamente', // set your message here
+  // formatear hora al formato militar
+  String formedtime() {
+    String time = _horaController.text;
+    String hour = time.split(":")[0];
+    String minutes = time.split(":")[1].split(" ")[0];
+    String ampm = time.split(":")[1].split(" ")[1];
+    if (ampm == "PM") {
+      int hourInt = int.parse(hour);
+      if (hourInt < 12) {
+        hourInt += 12;
+        hour = hourInt.toString();
+      }
+    }
+    var horaFormateada = "$hour:$minutes";
+    return horaFormateada;
+  }
 
-                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                  contentType: ContentType.warning,
-                ),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            } else {
-              final snackBar = SnackBar(
-                /// need to set following properties for best effect of awesome_snackbar_content
-                elevation: 0,
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: Colors.transparent,
-                content: AwesomeSnackbarContent(
-                  title: 'Error al guardar la timbre',
-                  titleFontSize: MediaQuery.of(context).size.width * 0.04,
-                  message: 'Ha ocurrido un error al guardar la timbre',
+  // los dias seleccionados se guardan en un array de strings tomara solo las tres primeras letras de cada dia
+  List<String> formedDays() {
+    List<String> days = selectedDays.map((dayIndex) {
+      return this.days[dayIndex].substring(0, 3);
+    }).toList();
+    return days;
+  }
 
-                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                  contentType: ContentType.success,
-                ),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
-          });
-        }
+  sendbluetooth(String message) {
+    if (widget.connection != null) {
+      widget.connection!.output.add(utf8.encode(message + "\n"));
+      setState(() {
+        messages.add("Sent: $message");
+        print("mensaje enviado");
       });
+    } else {
+      print("Conexion invalida");
     }
   }
 
-  void getAlarms() async {
-    _controllerAlarm.getAlarms().then((value) {
-      setState(() {
-        List<String> alarms = _controllerAlarm.datosAlarms;
-        alarms.forEach((alarm) {
-          _alarms.add(jsonDecode(alarm));
-        });
-        print(_alarms);
-      });
-    });
+  // Guarda la alarma
+  void saveAlarm() {
+    if (selectedDays.length > 0) {
+      _controllerAlarm.saveAlarm({
+        'id': Uuid().v4(),
+        'name': _nombreController.text,
+        'sound': _soundController.text,
+        'hour': _horaController.text,
+        'day': selectedDays.map((dayIndex) => days[dayIndex]).join(", "),
+      }).then((value) {});
+      Get.snackbar(
+        'Alarma guardada',
+        'La alarma se ha guardado correctamente',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Color.fromARGB(255, 74, 175, 70),
+        colorText: Colors.white,
+        icon: Icon(
+          FontAwesomeIcons.checkCircle,
+          color: Colors.white,
+        ),
+        duration: Duration(seconds: 3),
+        animationDuration: Duration(milliseconds: 500),
+      );
+      // Enviar alarma a la placa
+      String message = _nombreController.text;
+      message += " " + formedDays().join(",");
+      message += " " + formedtime();
+      message += " " + _soundController.text;
+      sendbluetooth(message);
+    } else {
+      Get.snackbar(
+        'Error al guardar',
+        'Selecciona al menos un día para guardar la alarma',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
+        colorText: Colors.white,
+        icon: Icon(
+          FontAwesomeIcons.timesCircle,
+          color: Colors.white,
+        ),
+        duration: Duration(seconds: 3),
+        animationDuration: Duration(milliseconds: 500),
+      );
+    }
   }
 
-  void verifyConfiguredDays(int dayIndex) {
-    _alarms.forEach((alarms) {
-      if (alarms['day'] == days[dayIndex]) {
-        _volumeController.text = alarms['volume'] ?? '0.0';
-        _soundController.text = alarms['sound'] ?? '0';
-        _intervalsController.text = '${alarms['intervals']} AM' ?? '00:00 AM';
-      }
-    });
+  void getSound(String sound) {
+    this._soundController.text = sound;
+    setState(() {});
   }
 
   void handleDaySelection(int dayIndex) {
@@ -124,7 +138,6 @@ class _AlarmSettingsState extends State<AlarmSettings> {
       } else {
         selectedDays.add(dayIndex);
       }
-      verifyConfiguredDays(dayIndex);
     });
   }
 
@@ -141,7 +154,6 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     _volumeController.text = '0.0';
     _soundController.text = '0';
     _intervalsController.text = '00:00 AM';
-    getAlarms();
   }
 
   @override
@@ -440,17 +452,19 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                       //   },
                                       // ),
                                       TypeSound(
-                                        titleVisible: true,
-                                        margin: true,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.9,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.16,
-                                        initialValue:
-                                            double.parse(_soundController.text),
-                                      ),
+                                          titleVisible: true,
+                                          margin: true,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.9,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.16,
+                                          initialValue: double.parse(
+                                              _soundController.text),
+                                          onSoundSelected: getSound),
                                       HourSelection(
                                           timeInitial: time,
                                           units: false,
@@ -478,7 +492,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                         child: GradientButton(
                                           text: "Guardar timbre",
                                           onPressed: () {
-                                            setNewAlarm();
+                                            saveAlarm();
                                           },
                                           gradientColors: [
                                             Color.fromARGB(255, 121, 219, 118),
