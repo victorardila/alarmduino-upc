@@ -68,6 +68,21 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     return days;
   }
 
+  String createmessage() {
+    // recorrer los dias seleccionados
+    String message = "";
+    List<String> days = formedDays();
+    for (var i = 0; i < days.length; i++) {
+      // Enviar alarma a la placa
+      message = "SAVE ";
+      message += "/" + _nombreController.text;
+      message += "/" + days[i];
+      message += "/" + formedtime();
+      message += "/" + _soundController.text;
+    }
+    return message;
+  }
+
   sendbluetooth(String message) {
     if (widget.connection != null) {
       widget.connection!.output.add(utf8.encode(message + "\n"));
@@ -103,11 +118,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
         duration: Duration(seconds: 3),
         animationDuration: Duration(milliseconds: 500),
       );
-      // Enviar alarma a la placa
-      String message = _nombreController.text;
-      message += " " + formedDays().join(",");
-      message += " " + formedtime();
-      message += " " + _soundController.text;
+      String message = createmessage();
       sendbluetooth(message);
     } else {
       Get.snackbar(
