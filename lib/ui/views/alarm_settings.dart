@@ -79,6 +79,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
       message += "/" + days[i];
       message += "/" + formedtime();
       message += "/" + _soundController.text;
+      print("Mensaje a enviar: $message");
       sendbluetooth(message);
     }
   }
