@@ -27,13 +27,20 @@ class _TypeSoundState extends State<TypeSound> {
 
   // callback function para retornar el valor seleccionado
   void callbackreturnsound() {
-    widget.onSoundSelected(selectedSound);
+    if (selectedSound == "Sound 1") {
+      widget.onSoundSelected("S1");
+    } else if (selectedSound == "Sound 2") {
+      widget.onSoundSelected("S2");
+    } else if (selectedSound == "Sound 3") {
+      widget.onSoundSelected("S3");
+    }
   }
 
   @override
   void initState() {
     super.initState();
     selectedSound = "Sound 1";
+    callbackreturnsound();
   }
 
   @override
