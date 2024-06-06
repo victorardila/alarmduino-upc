@@ -49,16 +49,11 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     String hour = time.split(":")[0];
     String minutes = time.split(":")[1].split(" ")[0];
     String ampm = time.split(":")[1].split(" ")[1];
-    if (ampm == "PM") {
+    if (ampm == "AM") {
       int hourInt = int.parse(hour);
       if (hourInt < 12) {
         hourInt += 12;
         hour = hourInt.toString();
-      }
-    } else {
-      int hourInt = int.parse(hour);
-      if (hourInt == 12) {
-        hour = "00";
       }
     }
     var horaFormateada = "$hour:$minutes";
