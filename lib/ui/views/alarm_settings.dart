@@ -75,7 +75,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     for (var i = 0; i < days.length; i++) {
       // Enviar alarma a la placa
       message = "SAVE ";
-      message += "/" + _nombreController.text;
+      message += "/" + _nombreController.text.toUpperCase();
       message += "/" + days[i];
       message += "/" + formedtime();
       message += "/" + _soundController.text;
