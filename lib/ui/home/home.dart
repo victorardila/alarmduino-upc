@@ -81,7 +81,10 @@ class _HomeState extends State<Home> {
           connection: _connection,
           deviceConnected: _deviceConnected,
           onPageSelected: _bottomNavigationKey.currentState?.setPage),
-      AlarmSettings(),
+      AlarmSettings(
+        connection: _connection,
+        deviceConnected: _deviceConnected,
+      ),
     ];
     return Scaffold(
       //Estilos del panel superior de la aplicacion

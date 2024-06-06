@@ -55,6 +55,11 @@ class _AlarmSettingsState extends State<AlarmSettings> {
         hourInt += 12;
         hour = hourInt.toString();
       }
+    } else {
+      int hourInt = int.parse(hour);
+      if (hourInt == 12) {
+        hour = "00";
+      }
     }
     var horaFormateada = "$hour:$minutes";
     return horaFormateada;
@@ -74,11 +79,12 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     List<String> days = formedDays();
     for (var i = 0; i < days.length; i++) {
       // Enviar alarma a la placa
-      message = "SAVE ";
-      message += "/" + _nombreController.text.toUpperCase();
+      message = "SAVE";
+      message += " " + _nombreController.text.toUpperCase();
       message += "/" + days[i];
       message += "/" + formedtime();
       message += "/" + _soundController.text;
+      message += "/";
       print("Mensaje a enviar: $message");
       sendbluetooth(message);
     }
