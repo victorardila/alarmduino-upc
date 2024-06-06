@@ -36,7 +36,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   List<String> days = [
     'Lunes',
     'Martes',
-    'Miércoles',
+    'Miercoles',
     'Jueves',
     'Viernes',
     'Sábado',
