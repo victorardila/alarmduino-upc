@@ -5,15 +5,16 @@ class InfoDevice extends StatefulWidget {
   final bluetooth;
   final deviceConnected;
   final connection;
+  final state;
   final onDevicesVinculed;
-  final onDeviceConnected;
-  InfoDevice(
-      {super.key,
-      this.bluetooth,
-      this.deviceConnected,
-      this.connection,
-      this.onDevicesVinculed,
-      this.onDeviceConnected});
+  InfoDevice({
+    super.key,
+    this.bluetooth,
+    this.deviceConnected,
+    this.connection,
+    this.state,
+    this.onDevicesVinculed,
+  });
 
   @override
   State<InfoDevice> createState() => _InfoDeviceState();
@@ -55,6 +56,12 @@ class _InfoDeviceState extends State<InfoDevice> {
     });
   }
 
+  void getState() {
+    widget.state
+        ? _deviceConnected == widget.deviceConnected
+        : _deviceConnected = "";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +76,7 @@ class _InfoDeviceState extends State<InfoDevice> {
     super.didUpdateWidget(oldWidget);
     getConnectedDevice();
     getConnection();
+    getState();
   }
 
   @override
@@ -92,7 +100,9 @@ class _InfoDeviceState extends State<InfoDevice> {
                         ),
               ),
               TextSpan(
-                text: _deviceConnected != "" && _connection?.isConnected != false ? _deviceConnected : "Ninguno",
+                text: _deviceConnected != "" && widget.state != false
+                    ? _deviceConnected
+                    : "Ninguno",
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.height * 0.025,
                   color: _deviceConnected != ""

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/custom_dialog.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +7,10 @@ import 'package:get/get.dart';
 
 class AlarmList extends StatefulWidget {
   final connection;
-  AlarmList({Key? key, this.connection}) : super(key: key);
+  final deviceConnected;
+  final onPageSelected;
+  AlarmList(
+      {super.key, this.connection, this.deviceConnected, this.onPageSelected});
 
   @override
   State<AlarmList> createState() => _AlarmListState();
@@ -41,6 +42,12 @@ class _AlarmListState extends State<AlarmList> {
     _controllerAlarm.deleteAllAlarms().then((value) {
       getAlarms();
     });
+  }
+
+  // Seleccionar vista de agregar alarma
+  void setPage(int pageSelected) {
+    print("Pagina seleccionada: $pageSelected");
+    widget.onPageSelected(pageSelected);
   }
 
   sendbluetooth(String message) {
@@ -267,16 +274,16 @@ class _AlarmListState extends State<AlarmList> {
             sendbluetooth("E");
           }),
           _buildFabOption(Icons.alarm_add, 'Agregar', () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return CustomDialog(indexAlarmCurrent: _alarms.length + 1);
-              },
-            ).then((value) {
-              // Llama a getAlarms() después de completar la acción en el CustomDialog
-              getAlarms();
-              _isExpanded = false;
-            });
+            // showDialog(
+            //   context: context,
+            //   builder: (context) {
+            //     return CustomDialog(indexAlarmCurrent: _alarms.length + 1);
+            //   },
+            // ).then((value) {
+            //   // Llama a getAlarms() después de completar la acción en el CustomDialog
+            //   getAlarms();
+            //   _isExpanded = false;
+            // });
           }),
           _buildFabOption(FontAwesomeIcons.trashCan, 'Borrar', () {
             deleteAllAlarms();

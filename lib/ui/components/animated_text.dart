@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AnimatedText extends StatefulWidget {
-  final bool connection;
-  const AnimatedText({super.key, required this.connection});
+  final connection;
+  final deviceConnected;
+  const AnimatedText({super.key, this.connection, this.deviceConnected});
 
   @override
   AnimatedTextState createState() => AnimatedTextState();
@@ -17,6 +18,7 @@ class AnimatedTextState extends State<AnimatedText>
   @override
   void initState() {
     super.initState();
+    print("Conexion: ${widget.connection}");
     _controller = AnimationController(
       duration: const Duration(seconds: 5),
       vsync: this,
@@ -40,11 +42,11 @@ class AnimatedTextState extends State<AnimatedText>
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: widget.connection
+        gradient: widget.connection != null
             ? LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 83, 190, 79),
-                  Color.fromARGB(255, 42, 141, 38)
+                  Color.fromARGB(255, 255, 237, 43),
+                  Color.fromARGB(255, 178, 180, 44)
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -59,17 +61,20 @@ class AnimatedTextState extends State<AnimatedText>
               ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          widget.connection
-              ? Center(
+          widget.deviceConnected != ""
+              ? Container(
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '<< Device Connected >>',
+                        'Device Connected to ${widget.deviceConnected}',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,
                           fontFamily: 'LCD',
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(width: 10),

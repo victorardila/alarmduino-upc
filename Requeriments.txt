@@ -1,0 +1,13 @@
+Requerimientos
+
+Quitar dialog
+Barra inferiror
+- Test
+- Limpiar
+- agregar me manda a la segunda vista
+Vista Inicio
+- Total de alarmas y con filtro por dia
+Vista Configuracion
+- Toda la configuracion
+
+

@@ -7,20 +7,23 @@ class CustomDrawer extends StatefulWidget {
   final bluetooth;
   final bluetoothState;
   final devices;
-  final deviceConnected;
+  final deviceConected;
   final isConnecting;
   final connection;
   final onBluetoothConnection;
-  const CustomDrawer({
-    super.key,
-    this.bluetooth,
-    this.bluetoothState,
-    this.devices,
-    this.deviceConnected,
-    this.isConnecting,
-    this.connection,
-    this.onBluetoothConnection
-  });
+  final onDeviceConected;
+  final onState;
+  const CustomDrawer(
+      {super.key,
+      this.bluetooth,
+      this.bluetoothState,
+      this.devices,
+      this.deviceConected,
+      this.isConnecting,
+      this.connection,
+      this.onBluetoothConnection,
+      this.onDeviceConected,
+      this.onState});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -28,21 +31,47 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   BluetoothConnection? _connection;
+  bool _state = false;
+  var _deviceConnected;
+
+  void getConnectedDevice(String device) {
+    setState(() {
+      this._deviceConnected = device;
+    });
+    print("Dispositivo conectado en el drawer: ${_deviceConnected}");
+    _callBackonDeviceConected(device);
+  }
+
+  void _callBackonDeviceConected(String device) async {
+    widget.onDeviceConected(device);
+  }
 
   void getConnection(BluetoothConnection connection) {
     setState(() {
-      this._connection=connection;
+      this._connection = connection;
     });
     _callBackConnectedDevice(_connection!);
-    print("Esta es la conexionn blue en el drawer ${connection}");
   }
 
   void _callBackConnectedDevice(BluetoothConnection connection) async {
     widget.onBluetoothConnection(connection);
   }
+
+  void getState(bool state) {
+    setState(() {
+      this._state = state;
+    });
+    _callBackState(_state);
+  }
+
+  void _callBackState(bool state) {
+    widget.onState(state);
+  }
+
   @override
   void initState() {
     super.initState();
+    _deviceConnected = widget.deviceConected != "" ? widget.deviceConected : "";
   }
 
   @override
@@ -110,14 +139,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
             ),
             CustomConnection(
-              bluetooth: widget.bluetooth,
-              bluetoothState: widget.bluetoothState,
-              devices: widget.devices,
-              deviceConnected: widget.deviceConnected,
-              isConnecting: widget.isConnecting,
-              connection: widget.connection,
-              onBluetoothConnection:getConnection
-            ),
+                bluetooth: widget.bluetooth,
+                bluetoothState: widget.bluetoothState,
+                devices: widget.devices,
+                deviceConnected: _deviceConnected,
+                isConnecting: widget.isConnecting,
+                connection: widget.connection,
+                onBluetoothConnection: getConnection,
+                onDeviceConected: getConnectedDevice,
+                onState: getState),
             // Container(
             //   height: MediaQuery.of(context).size.height,
             //   width: MediaQuery.of(context).size.width,

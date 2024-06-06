@@ -5,14 +5,16 @@ import 'package:alarmduino_upc/ui/components/gradient_button.dart';
 import 'package:alarmduino_upc/ui/components/intervals_time.dart';
 import 'package:alarmduino_upc/ui/components/item_day.dart';
 import 'package:alarmduino_upc/ui/components/type_sound.dart';
-import 'package:alarmduino_upc/ui/components/volume_bar.dart';
+// import 'package:alarmduino_upc/ui/components/volume_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class AlarmSettings extends StatefulWidget {
-  AlarmSettings({super.key});
+  final connection;
+  final deviceConnected;
+  AlarmSettings({super.key, this.connection, this.deviceConnected});
 
   @override
   State<AlarmSettings> createState() => _AlarmSettingsState();

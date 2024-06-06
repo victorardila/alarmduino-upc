@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
   bool _isConnecting = false;
   BluetoothConnection? _connection;
   List<BluetoothDevice> _devices = [];
-  BluetoothDevice? _deviceConnected;
+  var _deviceConnected = "";
 
   void _requestPermission() async {
     await Permission.location.request();
@@ -36,11 +36,23 @@ class _HomeState extends State<Home> {
     await Permission.bluetoothConnect.request();
   }
 
+  void getConnectedDevice(String device) {
+    setState(() {
+      this._deviceConnected = device;
+    });
+    print("Dispositivo conectado en el home: ${_deviceConnected}");
+  }
+
   void getConnection(BluetoothConnection connection) {
     setState(() {
-      this._connection=connection;
+      this._connection = connection;
     });
-    print("Esta es la conexionn blue en el home ${connection}");
+  }
+
+  void getState(bool state) {
+    setState(() {
+      this._bluetoothState = state;
+    });
   }
 
   @override
@@ -58,10 +70,6 @@ class _HomeState extends State<Home> {
         case BluetoothState.STATE_ON:
           setState(() => _bluetoothState = true);
           break;
-        // case BluetoothState.STATE_TURNING_OFF:
-        //   break;
-        // case BluetoothState.STATE_TURNING_ON:
-        //   break;
       }
     });
   }
@@ -69,23 +77,28 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> views = <Widget>[
-      AlarmList(connection:_connection),
+      AlarmList(
+          connection: _connection,
+          deviceConnected: _deviceConnected,
+          onPageSelected: _bottomNavigationKey.currentState?.setPage),
       AlarmSettings(),
     ];
     return Scaffold(
       //Estilos del panel superior de la aplicacion
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(150), // Altura deseada del appbar
-        child: CustomAppBar(),
+        child: CustomAppBar(
+            connection: _connection, deviceConnected: _deviceConnected),
       ),
       endDrawer: CustomDrawer(
         bluetooth: _bluetooth,
         bluetoothState: _bluetoothState,
         devices: _devices,
-        deviceConnected: _deviceConnected,
+        deviceConected: _deviceConnected,
         isConnecting: _isConnecting,
         connection: _connection,
-        onBluetoothConnection: getConnection
+        onBluetoothConnection: getConnection,
+        onDeviceConected: getConnectedDevice,
       ),
       body: Container(
         // La altura debe ajustarse al tamaño de la pantalla restante

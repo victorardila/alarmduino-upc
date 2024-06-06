@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alarmduino_upc/domain/controllers/controller_bluettoth.dart';
 import 'package:alarmduino_upc/ui/components/bluetooth_device.dart';
 import 'package:alarmduino_upc/ui/components/custom_switch.dart';
 import 'package:alarmduino_upc/ui/components/info_device.dart';
@@ -15,6 +16,8 @@ class CustomConnection extends StatefulWidget {
   final devices;
   final deviceConnected;
   final onBluetoothConnection;
+  final onDeviceConected;
+  final onState;
   CustomConnection(
       {super.key,
       this.bluetooth,
@@ -24,17 +27,19 @@ class CustomConnection extends StatefulWidget {
       this.connection,
       this.devices,
       this.deviceConnected,
-      this.onBluetoothConnection
-      });
+      this.onBluetoothConnection,
+      this.onDeviceConected,
+      this.onState});
 
   @override
   State<CustomConnection> createState() => _CustomConnectionState();
 }
 
 class _CustomConnectionState extends State<CustomConnection> {
+  ControllerBluetooth controllerBluetooth = ControllerBluetooth();
   List<Map<String, dynamic>> labelStrings = [];
   late var bluetooth;
-  bool state = false;
+  bool _state = false;
   bool _isConnecting = false;
   BluetoothConnection? _connection;
   List<BluetoothDevice> _devices = [];
@@ -45,7 +50,7 @@ class _CustomConnectionState extends State<CustomConnection> {
     bluetooth = FlutterBluetoothSerial.instance;
     bool isEnabled = await bluetooth.isEnabled;
     setState(() {
-      state = isEnabled;
+      _state = isEnabled;
     });
   }
 
@@ -53,16 +58,33 @@ class _CustomConnectionState extends State<CustomConnection> {
     setState(() {
       this._deviceConnected = device.name!;
     });
+    print("Dispositivo conectado en el custom connection: ${_deviceConnected}");
+    _callBackonDeviceConected(_deviceConnected);
+  }
+
+  void _callBackonDeviceConected(String device) {
+    widget.onDeviceConected(device);
   }
 
   void getConnection(BluetoothConnection connection) {
     setState(() {
-      _connection=connection;
+      _connection = connection;
     });
     _callBackConnectedDevice(_connection!);
   }
 
-  void _callBackConnectedDevice(BluetoothConnection connection) async {
+  void getState(bool state) {
+    setState(() {
+      this._state = state;
+    });
+    _callBackState(_state);
+  }
+
+  void _callBackState(bool state) {
+    widget.onState(state);
+  }
+
+  void _callBackConnectedDevice(BluetoothConnection connection) {
     widget.onBluetoothConnection(connection);
   }
 
@@ -70,9 +92,16 @@ class _CustomConnectionState extends State<CustomConnection> {
   void initState() {
     super.initState();
     _bluetoothState = FlutterBluetoothSerial.instance.onStateChanged();
+    widget.deviceConnected != null
+        ? _deviceConnected = widget.deviceConnected
+        : _deviceConnected = "";
+    widget.bluetoothState != null
+        ? _state = widget.bluetoothState
+        : _state = false;
+    print("Estado de bluetooth: $_state");
+    print(widget.deviceConnected);
     _getBluetoothState();
     bluetooth = FlutterBluetoothSerial.instance;
-    state = widget.bluetoothState;
     _isConnecting = widget.isConnecting;
     _connection = widget.connection;
     _devices = widget.devices;
@@ -104,13 +133,13 @@ class _CustomConnectionState extends State<CustomConnection> {
             child: InfoDevice(
               deviceConnected: _deviceConnected,
               connection: _connection,
+              state: _state,
               bluetooth: bluetooth,
               onDevicesVinculed: (List<BluetoothDevice> devices) {
                 setState(() {
                   _devices = devices;
                 });
               },
-              onDeviceConnected: getConnectedDevice
             ),
           ),
           Container(
@@ -152,19 +181,12 @@ class _CustomConnectionState extends State<CustomConnection> {
                             SizedBox(
                               width: 20,
                               child: CustonSwitch(
-                                icon: false,
-                                label: false,
-                                logoMode: false,
-                                bluetooth: bluetooth,
-                                bluetoothState: state,
-                                onBluetoothStateChange: (bool value) {
-                                  setState(() {
-                                    state = value;
-                                    _bluetoothState =
-                                        bluetooth.onStateChanged();
-                                  });
-                                },
-                              ),
+                                  icon: false,
+                                  label: false,
+                                  logoMode: false,
+                                  bluetooth: bluetooth,
+                                  bluetoothState: _state,
+                                  onBluetoothStateChange: getState),
                             ),
                           ],
                         ),
@@ -172,7 +194,7 @@ class _CustomConnectionState extends State<CustomConnection> {
                           Container(
                             height: MediaQuery.of(context).size.height * 0.42,
                             width: MediaQuery.of(context).size.width,
-                            child: state
+                            child: _state
                                 ? SingleChildScrollView(
                                     child: Container(
                                       child: Column(
@@ -279,7 +301,7 @@ class _CustomConnectionState extends State<CustomConnection> {
                                             child: BluetoothDeviceList(
                                               bluetooth: bluetooth,
                                               bluetoothState: _bluetoothState,
-                                              state: state,
+                                              state: _state,
                                               isConnecting: _isConnecting,
                                               onConnectedDevice:
                                                   getConnectedDevice,
@@ -305,7 +327,7 @@ class _CustomConnectionState extends State<CustomConnection> {
                                             fontSize: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.01,
+                                                0.02,
                                           ),
                                         ),
                                       ],

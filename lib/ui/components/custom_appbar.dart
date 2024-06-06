@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomAppBar extends StatefulWidget {
-  CustomAppBar({super.key});
+  final connection;
+  final deviceConnected;
+  CustomAppBar({super.key, this.connection, this.deviceConnected});
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -17,7 +19,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
         preferredSize: Size.fromHeight(50),
         child: Container(
           alignment: Alignment.center,
-          child: AnimatedText(connection: false),
+          child: AnimatedText(
+              connection: widget.connection,
+              deviceConnected: widget.deviceConnected),
         ),
       ),
       toolbarHeight: 150,
