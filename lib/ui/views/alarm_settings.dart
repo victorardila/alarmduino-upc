@@ -51,7 +51,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     String minutes = time.split(":")[1].split(" ")[0];
     String ampm = time.split(":")[1].split(" ")[1];
     ampm == "AM" ? ampm = "PM" : ampm = "AM";
-    if (ampm == "PM") {
+    if (ampm == "AM") {
       int hourInt = int.parse(hour);
       if (hourInt < 12) {
         hourInt += 12;
