@@ -144,6 +144,7 @@ class _HourSelectionState extends State<HourSelection> {
                       _hoursController.text = value.toString();
                       _timeController.text =
                           "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}";
+                      print(_timeController.text);
                       callbackValueHour(_timeController.text);
                     });
                   },
@@ -174,6 +175,7 @@ class _HourSelectionState extends State<HourSelection> {
                       print(timeFormatIndex);
                       _timeController.text =
                           "${_hoursController.text.padLeft(2, '0')}:${_minutosController.text.padLeft(2, '0')} ${widget.customFormat ? getSelectedTimeFormat(timeFormatIndex) : ''}";
+                      print(_timeController.text);
                       callbackValueHour(_timeController.text);
                     });
                   },
