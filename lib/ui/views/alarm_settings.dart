@@ -168,79 +168,79 @@ class _AlarmSettingsState extends State<AlarmSettings> {
               ],
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.235,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              color: Color.fromARGB(255, 242, 226, 5),
-              child: Column(
-                children: [
-                  Container(
-                      margin: EdgeInsets.symmetric(vertical: 2),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            "Días de la semana",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.04,
-                              fontFamily: 'Italianno-Regular',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Icon(
-                            FontAwesomeIcons.solidCalendarDays,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            size: 20,
-                          )
-                        ],
-                      )),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.185,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color.fromRGBO(218, 216, 216, 1),
-                        width: 2,
-                      ),
-                      color: Color.fromRGBO(243, 242, 242, 1),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    // Crear lista de scroll horizontal
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        return ItemDay(
-                          dia: index,
-                          alto: MediaQuery.of(context).size.height * 0.123,
-                          ancho: MediaQuery.of(context).size.width * 0.3,
-                          daySelected: selectedDays.contains(index),
-                          onDaySelected:
-                              handleDaySelection, // Paso de la función de selección
-                        );
-                      },
-                    ),
-                    // child: GridView.count(
-                    //   crossAxisCount: 3,
-                    //   children: List.generate(7, (index) {
-                    //     return ItemDay(
-                    //       dia: index,
-                    //       alto: MediaQuery.of(context).size.height * 0.123,
-                    //       ancho: MediaQuery.of(context).size.width * 0.3,
-                    //     );
-                    //   }),
-                    // ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   height: MediaQuery.of(context).size.height * 0.235,
+          //   width: MediaQuery.of(context).size.width,
+          //   child: Container(
+          //     color: Color.fromARGB(255, 242, 226, 5),
+          //     child: Column(
+          //       children: [
+          //         Container(
+          //             margin: EdgeInsets.symmetric(vertical: 2),
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               mainAxisSize: MainAxisSize.max,
+          //               children: [
+          //                 Text(
+          //                   "Días de la semana",
+          //                   style: TextStyle(
+          //                     color: Color.fromARGB(255, 0, 0, 0),
+          //                     fontSize:
+          //                         MediaQuery.of(context).size.width * 0.04,
+          //                     fontFamily: 'Italianno-Regular',
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //                 Icon(
+          //                   FontAwesomeIcons.solidCalendarDays,
+          //                   color: Color.fromARGB(255, 0, 0, 0),
+          //                   size: 20,
+          //                 )
+          //               ],
+          //             )),
+          //         Container(
+          //           height: MediaQuery.of(context).size.height * 0.185,
+          //           decoration: BoxDecoration(
+          //             border: Border.all(
+          //               color: Color.fromRGBO(218, 216, 216, 1),
+          //               width: 2,
+          //             ),
+          //             color: Color.fromRGBO(243, 242, 242, 1),
+          //             borderRadius: BorderRadius.only(
+          //               topLeft: Radius.circular(20),
+          //               topRight: Radius.circular(20),
+          //             ),
+          //           ),
+          //           // Crear lista de scroll horizontal
+          //           child: ListView.builder(
+          //             scrollDirection: Axis.horizontal,
+          //             itemCount: 7,
+          //             itemBuilder: (context, index) {
+          //               return ItemDay(
+          //                 dia: index,
+          //                 alto: MediaQuery.of(context).size.height * 0.123,
+          //                 ancho: MediaQuery.of(context).size.width * 0.3,
+          //                 daySelected: selectedDays.contains(index),
+          //                 onDaySelected:
+          //                     handleDaySelection, // Paso de la función de selección
+          //               );
+          //             },
+          //           ),
+          //           // child: GridView.count(
+          //           //   crossAxisCount: 3,
+          //           //   children: List.generate(7, (index) {
+          //           //     return ItemDay(
+          //           //       dia: index,
+          //           //       alto: MediaQuery.of(context).size.height * 0.123,
+          //           //       ancho: MediaQuery.of(context).size.width * 0.3,
+          //           //     );
+          //           //   }),
+          //           // ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: Container(
               color: Color.fromARGB(255, 242, 226, 5),
