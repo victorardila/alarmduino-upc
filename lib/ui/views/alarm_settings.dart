@@ -138,7 +138,6 @@ class _AlarmSettingsState extends State<AlarmSettings> {
 
   void getSound(String sound) {
     this._soundController.text = sound;
-    setState(() {});
   }
 
   void handleDaySelection(int dayIndex) {
@@ -163,7 +162,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     super.initState();
     _volumeController.text = '0.0';
     _soundController.text = '0';
-    _intervalsController.text = '00:00 AM';
+    _horaController.text = '00:00 AM';
   }
 
   @override
