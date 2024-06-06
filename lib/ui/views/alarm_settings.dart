@@ -9,6 +9,7 @@ import 'package:alarmduino_upc/ui/components/type_sound.dart';
 // import 'package:alarmduino_upc/ui/components/volume_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
@@ -70,18 +71,33 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     return days;
   }
 
-  sendBluetoothMessage() {
-    // recorrer los dias seleccionados
-    String message = "";
+  String padToLength(String message, int length) {
+    if (message.length >= length) {
+      return message;
+    } else {
+      print(length - message.length);
+      int spaces = length - message.length;
+      for (int i = 0; i < spaces + 1; i++) {
+        message += "-";
+      }
+      return message;
+    }
+  }
+
+  void sendBluetoothMessage() {
+    // Recorrer los días seleccionados
     List<String> days = formedDays();
     for (var i = 0; i < days.length; i++) {
       // Enviar alarma a la placa
-      message = "SAVE";
-      message += " " + _nombreController.text.toUpperCase();
+      String command = "SAVE";
+      String message = " " + _nombreController.text.toUpperCase();
       message += "/" + days[i];
       message += "/" + formedtime();
       message += "/" + _soundController.text;
       message += "/";
+      // Asegurar que el mensaje tenga 26 caracteres
+      message = padToLength(message, 26);
+      command += message;
       print("Mensaje a enviar: $message");
       sendbluetooth(message);
     }
@@ -439,6 +455,10 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                                         color: Colors.black),
                                                     border: InputBorder.none,
                                                   ),
+                                                  inputFormatters: [
+                                                    LengthLimitingTextInputFormatter(
+                                                        12),
+                                                  ],
                                                 ),
                                               ),
                                             ],
