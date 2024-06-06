@@ -308,6 +308,7 @@ class _AlarmListState extends State<AlarmList> {
             // });
           }),
           _buildFabOption(FontAwesomeIcons.trashCan, 'Borrar', () {
+            sendbluetooth("CLEAR");
             deleteAllAlarms();
             _isExpanded = false;
           }),
