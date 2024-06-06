@@ -161,7 +161,6 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   void initState() {
     super.initState();
     _volumeController.text = '0.0';
-    _soundController.text = '0';
     _horaController.text = '00:00 AM';
   }
 
@@ -471,8 +470,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                                   .size
                                                   .height *
                                               0.16,
-                                          initialValue: double.parse(
-                                              _soundController.text),
+                                          initialValue: 0,
                                           onSoundSelected: getSound),
                                       HourSelection(
                                           timeInitial: time,
