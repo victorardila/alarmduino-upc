@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class CustomFilterDay extends StatefulWidget {
-  const CustomFilterDay({super.key});
+  final alarms;
+  final onAlarmsFiltered;
+  const CustomFilterDay({super.key, this.alarms, this.onAlarmsFiltered});
 
   @override
   State<CustomFilterDay> createState() => _CustomFilterDayState();
@@ -10,30 +13,45 @@ class CustomFilterDay extends StatefulWidget {
 
 class _CustomFilterDayState extends State<CustomFilterDay> {
   List<String> filters = [
+    "Todas",
     "Lunes",
     "Martes",
-    "Miércoles",
+    "Miercoles",
     "Jueves",
     "Viernes",
-    "Sábado",
+    "Sabado",
     "Domingo"
   ];
-  void seleccionarFilter(filter) {}
 
-  String selectedCategoryId = "0"; // ID de la categoría seleccionada
+  void seleccionarFilter(String filter) {
+    if (filter == "Todas") {
+      widget.onAlarmsFiltered(widget.alarms);
+    } else {
+      List<String> alarmsFiltered = [];
+      for (var alarm in widget.alarms) {
+        // Convertir alarm a un json
+        Map<String, dynamic> alarmJson = jsonDecode(alarm);
+        if (alarmJson['day'] == filter) {
+          print(alarmJson['day']);
+          alarmsFiltered.add(alarm);
+        }
+      }
+      print(alarmsFiltered);
+      widget.onAlarmsFiltered(alarmsFiltered);
+    }
+  }
+
+  String selectedCategoryId = "Todas";
+
   List<Widget> buildFilters() {
     return filters.map((filter) {
       bool isSelected = selectedCategoryId == filter;
       return Container(
         padding: EdgeInsets.only(left: 15, bottom: 10),
         child: ElevatedButton(
-          child: Row(
-            children: [
-              Text(
-                filter,
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
+          child: Text(
+            filter,
+            style: TextStyle(fontSize: 14),
           ),
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.all<Color>(

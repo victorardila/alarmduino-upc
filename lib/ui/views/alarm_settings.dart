@@ -28,10 +28,10 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   TextEditingController _nombreController = TextEditingController();
   TextEditingController _volumeController = TextEditingController();
   TextEditingController _soundController = TextEditingController();
-  TextEditingController _intervalsController = TextEditingController();
   TextEditingController _horaController = TextEditingController();
   List<int> selectedDays = [];
   List<String> messages = [];
+  List<String> _alarms = [];
   List<Map<String, dynamic>> configuredDays = [];
   String time = '00:00 AM';
   List<String> days = [
@@ -40,7 +40,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     'Miercoles',
     'Jueves',
     'Viernes',
-    'Sábado',
+    'Sabado',
     'Domingo'
   ];
 
@@ -64,11 +64,9 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   }
 
   // los dias seleccionados se guardan en un array de strings tomara solo las tres primeras letras de cada dia
-  List<String> formedDays() {
-    List<String> days = selectedDays.map((dayIndex) {
-      return this.days[dayIndex].substring(0, 3);
-    }).toList();
-    return days;
+  String formedDay(String day) {
+    String dayFormated = day.substring(0, 3);
+    return dayFormated;
   }
 
   String padToLength(String message, int length) {
@@ -84,23 +82,22 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     }
   }
 
-  void sendBluetoothMessage() {
+  void sendBluetoothMessage(String day) {
     // Recorrer los días seleccionados
-    List<String> days = formedDays();
-    for (var i = 0; i < days.length; i++) {
-      // Enviar alarma a la placa
-      String command = "SAVE";
-      String message = " " + _nombreController.text.toUpperCase();
-      message += "/" + days[i];
-      message += "/" + formedtime();
-      message += "/" + _soundController.text;
-      message += "/";
-      // Asegurar que el mensaje tenga 26 caracteres
-      message = padToLength(message, 26);
-      command += message;
-      print("Mensaje a enviar: $message");
-      sendbluetooth(message);
-    }
+    String dayFormted = formedDay(day);
+    // Enviar alarma a la placa
+    String command = "SAVE";
+    String message = " " + _nombreController.text.toUpperCase();
+    // toma
+    message += "/" + dayFormted;
+    message += "/" + formedtime();
+    message += "/" + _soundController.text;
+    message += "/";
+    // Asegurar que el mensaje tenga 26 caracteres
+    message = padToLength(message, 26);
+    message = command += message;
+    print("Mensaje a enviar: $message");
+    sendbluetooth(message);
   }
 
   sendbluetooth(String message) {
@@ -115,44 +112,96 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     }
   }
 
-  // Guarda la alarma
+  void getAlarms() async {
+    _controllerAlarm.getAlarms().then((value) {
+      setState(() {
+        _alarms = _controllerAlarm.datosAlarms;
+      });
+    });
+  }
+
+  // Guarda la alarma sin repetir la hora por dia
   void saveAlarm() {
     if (selectedDays.length > 0) {
-      _controllerAlarm.saveAlarm({
-        'id': Uuid().v4(),
-        'name': _nombreController.text,
-        'sound': _soundController.text,
-        'hour': _horaController.text,
-        'day': selectedDays.map((dayIndex) => days[dayIndex]).join(", "),
-      }).then((value) {});
-      Get.snackbar(
-        'Alarma guardada',
-        'La alarma se ha guardado correctamente',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Color.fromARGB(255, 74, 175, 70),
-        colorText: Colors.white,
-        icon: Icon(
-          FontAwesomeIcons.checkCircle,
-          color: Colors.white,
-        ),
-        duration: Duration(seconds: 3),
-        animationDuration: Duration(milliseconds: 500),
-      );
-      sendBluetoothMessage();
+      for (var i = 0; i < selectedDays.length; i++) {
+        // convertir _alarms a una lista de jsons
+        List<Map<String, dynamic>> alarmsJson = [];
+        for (var i = 0; i < _alarms.length; i++) {
+          alarmsJson.add(jsonDecode(_alarms[i]));
+        }
+        print(alarmsJson);
+        // Verificar si la alarma ya existe con la misma hora
+        bool exists = alarmsJson.any((element) =>
+            element['hour'] == _horaController.text &&
+            element['day'] == days[selectedDays[i]]);
+        print(exists);
+        if (!exists) {
+          _controllerAlarm.saveAlarm({
+            'id': Uuid().v4(),
+            'name': _nombreController.text,
+            'sound': _soundController.text,
+            'hour': _horaController.text,
+            'day': days[selectedDays[i]],
+          }).then((value) {});
+          if (_controllerAlarm.mensajeAlarm.contains('correctamente')) {
+            Navigator.of(context).pop();
+            final snackBar = SnackBar(
+              /// need to set following properties for best effect of awesome_snackbar_content
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'Alarma guardada correctamente',
+                titleFontSize: MediaQuery.of(context).size.width * 0.04,
+                message:
+                    'Se ha guardado la alarma correctamente', // set your message here
+
+                /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                contentType: ContentType.success,
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            sendBluetoothMessage(days[selectedDays[i]]);
+            // me envia a la pantalla de alarmas
+            Navigator.of(context).pushNamed('/principal');
+          }
+        } else {
+          Navigator.of(context).pop();
+          final snackBar = SnackBar(
+            /// need to set following properties for best effect of awesome_snackbar_content
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Error al guardar el timbre',
+              titleFontSize: MediaQuery.of(context).size.width * 0.04,
+              message:
+                  'Ya se guardo un timbre para ese horario', // set your message here
+
+              /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+              contentType: ContentType.success,
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+      }
     } else {
-      Get.snackbar(
-        'Error al guardar',
-        'Selecciona al menos un día para guardar la alarma',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Color.fromARGB(255, 255, 0, 0),
-        colorText: Colors.white,
-        icon: Icon(
-          FontAwesomeIcons.timesCircle,
-          color: Colors.white,
+      final snackBar = SnackBar(
+        /// need to set following properties for best effect of awesome_snackbar_content
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        content: AwesomeSnackbarContent(
+          title: 'Error al guardar la alarma',
+          titleFontSize: MediaQuery.of(context).size.width * 0.04,
+          message:
+              'No ha seleccionado ningun dia para el timbre', // set your message here
+
+          /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+          contentType: ContentType.failure,
         ),
-        duration: Duration(seconds: 3),
-        animationDuration: Duration(milliseconds: 500),
       );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
@@ -408,10 +457,11 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                           height: 60.0,
                                           margin: EdgeInsets.only(
                                               top: 10.0, bottom: 10.0),
+                                          // ancho de la pantalla
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.8,
+                                              0.9,
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                               color: Colors.grey
@@ -442,7 +492,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.4,
+                                                    0.5,
                                                 child: TextField(
                                                   controller: _nombreController,
                                                   style: TextStyle(
@@ -455,12 +505,23 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                                         color: Colors.black),
                                                     border: InputBorder.none,
                                                   ),
+                                                  onChanged: (value) {
+                                                    setState(() {});
+                                                  },
                                                   inputFormatters: [
                                                     LengthLimitingTextInputFormatter(
                                                         12),
                                                   ],
                                                 ),
                                               ),
+                                              Container(
+                                                child: Text(
+                                                  '${_nombreController.text.length}/12',
+                                                  style: TextStyle(
+                                                      color: Colors.black
+                                                          .withOpacity(0.6)),
+                                                ),
+                                              )
                                             ],
                                           ),
                                         ),

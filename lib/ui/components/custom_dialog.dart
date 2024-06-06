@@ -390,7 +390,7 @@ class _CustomDialogState extends State<CustomDialog> {
                                   'Se ha modificado la alarma correctamente', // set your message here
 
                               /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                              contentType: ContentType.warning,
+                              contentType: ContentType.success,
                             ),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);

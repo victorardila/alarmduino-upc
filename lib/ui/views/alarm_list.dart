@@ -20,6 +20,7 @@ class AlarmList extends StatefulWidget {
 class _AlarmListState extends State<AlarmList> {
   ControllerAlarm _controllerAlarm = Get.put(ControllerAlarm());
   List<String> _alarms = [];
+  List<String> _alarmsAux = [];
   List<String> messages = [];
   late bool _isExpanded;
 
@@ -27,6 +28,7 @@ class _AlarmListState extends State<AlarmList> {
     _controllerAlarm.getAlarms().then((value) {
       setState(() {
         _alarms = _controllerAlarm.datosAlarms;
+        _alarmsAux = _controllerAlarm.datosAlarms;
       });
     });
   }
@@ -61,6 +63,13 @@ class _AlarmListState extends State<AlarmList> {
     } else {
       print("Conexion invalida");
     }
+  }
+
+  void getAlarmsFiltered(List<String> alarmsFiltered) {
+    setState(() {
+      _alarmsAux = alarmsFiltered;
+      print("Alarms filtered: $_alarmsAux");
+    });
   }
 
   @override
@@ -113,7 +122,9 @@ class _AlarmListState extends State<AlarmList> {
                   child: Container(
                     child: Column(
                       children: [
-                        CustomFilterDay(),
+                        CustomFilterDay(
+                            alarms: _alarms,
+                            onAlarmsFiltered: getAlarmsFiltered),
                         Expanded(
                           child: Container(
                             child: _alarms.isEmpty
@@ -125,7 +136,7 @@ class _AlarmListState extends State<AlarmList> {
                                             color: Colors.black)),
                                   )
                                 : ListView.builder(
-                                    itemCount: _alarms.length,
+                                    itemCount: _alarmsAux.length,
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                         onTap: () {
@@ -136,7 +147,7 @@ class _AlarmListState extends State<AlarmList> {
                                               return CustomDialog(
                                                   indexAlarmCurrent: index + 1,
                                                   alarmCurrent: jsonDecode(
-                                                      _alarms[index]));
+                                                      _alarmsAux[index]));
                                             },
                                           ).then((value) {
                                             // Llama a getAlarms() después de completar la acción en el CustomDialog
@@ -144,74 +155,92 @@ class _AlarmListState extends State<AlarmList> {
                                           });
                                         },
                                         child: Container(
-                                          margin: EdgeInsets.all(8.0),
-                                          padding: EdgeInsets.all(16.0),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.2),
-                                                blurRadius: 6.0,
-                                                offset: Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              SizedBox(
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.alarm,
-                                                        color: Colors.black,
-                                                        size: 36.0),
-                                                    SizedBox(width: 16.0),
-                                                    RichText(
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      text: TextSpan(
-                                                        text:
-                                                            'Timbre ${index + 1}\n',
-                                                        style: TextStyle(
+                                            margin: EdgeInsets.all(8.0),
+                                            padding: EdgeInsets.all(16.0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 6.0,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons.alarm,
                                                           color: Colors.black,
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                        children: [
-                                                          TextSpan(
-                                                            text: jsonDecode(
-                                                                        _alarms[
-                                                                            index])[
-                                                                    'name'] +
-                                                                ' - ' +
-                                                                jsonDecode(_alarms[
-                                                                        index])[
-                                                                    'day'] +
-                                                                ' - ' +
-                                                                jsonDecode(_alarms[
-                                                                        index])[
-                                                                    'hour'],
+                                                          size: 36.0),
+                                                      SizedBox(width: 16.0),
+                                                      Expanded(
+                                                        child: RichText(
+                                                          maxLines: 3,
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          text: TextSpan(
+                                                            text:
+                                                                'Timbre ${index + 1} Hora:${jsonDecode(_alarmsAux[index])['hour']}\n',
                                                             style: TextStyle(
                                                               color:
                                                                   Colors.black,
-                                                              fontSize: 16.0,
+                                                              fontSize: 15.0,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .normal,
+                                                                      .bold,
                                                             ),
+                                                            children: [
+                                                              TextSpan(
+                                                                  text: "Titulo: " +
+                                                                      jsonDecode(
+                                                                              _alarmsAux[index])[
+                                                                          'name'] +
+                                                                      "\n", // Hora
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        15.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                  ),
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text: "Días: " +
+                                                                          jsonDecode(
+                                                                              _alarmsAux[index])['day'],
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            15.0,
+                                                                        fontWeight:
+                                                                            FontWeight.normal,
+                                                                      ),
+                                                                    ),
+                                                                  ]),
+                                                            ],
                                                           ),
-                                                        ],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              IconButton(
+                                                IconButton(
                                                   onPressed: () {
                                                     String alarmString =
                                                         _alarms[index];
@@ -223,10 +252,10 @@ class _AlarmListState extends State<AlarmList> {
                                                   icon: Icon(Icons.delete,
                                                       color: Color.fromARGB(
                                                           255, 255, 0, 0),
-                                                      size: 36.0))
-                                            ],
-                                          ),
-                                        ),
+                                                      size: 36.0),
+                                                ),
+                                              ],
+                                            )),
                                       );
                                     },
                                   ),
