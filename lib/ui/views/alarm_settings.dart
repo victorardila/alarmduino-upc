@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/gradient_button.dart';
+import 'package:alarmduino_upc/ui/components/hour_selection.dart';
 import 'package:alarmduino_upc/ui/components/intervals_time.dart';
 import 'package:alarmduino_upc/ui/components/item_day.dart';
 import 'package:alarmduino_upc/ui/components/type_sound.dart';
@@ -25,9 +26,11 @@ class _AlarmSettingsState extends State<AlarmSettings> {
   TextEditingController _volumeController = TextEditingController();
   TextEditingController _soundController = TextEditingController();
   TextEditingController _intervalsController = TextEditingController();
+  TextEditingController _horaController = TextEditingController();
   List<Map<String, dynamic>> _alarms = [];
   List<int> selectedDays = [];
   List<Map<String, dynamic>> configuredDays = [];
+  String time = '00:00 AM';
   List<String> days = [
     'Lunes',
     'Martes',
@@ -124,6 +127,13 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     });
   }
 
+  void getHour(String hour) {
+    this.time = hour;
+    setState(() {
+      _horaController.text = hour;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -168,79 +178,79 @@ class _AlarmSettingsState extends State<AlarmSettings> {
               ],
             ),
           ),
-          // SizedBox(
-          //   height: MediaQuery.of(context).size.height * 0.235,
-          //   width: MediaQuery.of(context).size.width,
-          //   child: Container(
-          //     color: Color.fromARGB(255, 242, 226, 5),
-          //     child: Column(
-          //       children: [
-          //         Container(
-          //             margin: EdgeInsets.symmetric(vertical: 2),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               mainAxisSize: MainAxisSize.max,
-          //               children: [
-          //                 Text(
-          //                   "Días de la semana",
-          //                   style: TextStyle(
-          //                     color: Color.fromARGB(255, 0, 0, 0),
-          //                     fontSize:
-          //                         MediaQuery.of(context).size.width * 0.04,
-          //                     fontFamily: 'Italianno-Regular',
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //                 Icon(
-          //                   FontAwesomeIcons.solidCalendarDays,
-          //                   color: Color.fromARGB(255, 0, 0, 0),
-          //                   size: 20,
-          //                 )
-          //               ],
-          //             )),
-          //         Container(
-          //           height: MediaQuery.of(context).size.height * 0.185,
-          //           decoration: BoxDecoration(
-          //             border: Border.all(
-          //               color: Color.fromRGBO(218, 216, 216, 1),
-          //               width: 2,
-          //             ),
-          //             color: Color.fromRGBO(243, 242, 242, 1),
-          //             borderRadius: BorderRadius.only(
-          //               topLeft: Radius.circular(20),
-          //               topRight: Radius.circular(20),
-          //             ),
-          //           ),
-          //           // Crear lista de scroll horizontal
-          //           child: ListView.builder(
-          //             scrollDirection: Axis.horizontal,
-          //             itemCount: 7,
-          //             itemBuilder: (context, index) {
-          //               return ItemDay(
-          //                 dia: index,
-          //                 alto: MediaQuery.of(context).size.height * 0.123,
-          //                 ancho: MediaQuery.of(context).size.width * 0.3,
-          //                 daySelected: selectedDays.contains(index),
-          //                 onDaySelected:
-          //                     handleDaySelection, // Paso de la función de selección
-          //               );
-          //             },
-          //           ),
-          //           // child: GridView.count(
-          //           //   crossAxisCount: 3,
-          //           //   children: List.generate(7, (index) {
-          //           //     return ItemDay(
-          //           //       dia: index,
-          //           //       alto: MediaQuery.of(context).size.height * 0.123,
-          //           //       ancho: MediaQuery.of(context).size.width * 0.3,
-          //           //     );
-          //           //   }),
-          //           // ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.235,
+            width: MediaQuery.of(context).size.width,
+            child: Container(
+              color: Color.fromARGB(255, 242, 226, 5),
+              child: Column(
+                children: [
+                  Container(
+                      margin: EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            "Días de la semana",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                              fontFamily: 'Italianno-Regular',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            FontAwesomeIcons.solidCalendarDays,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            size: 20,
+                          )
+                        ],
+                      )),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.185,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color.fromRGBO(218, 216, 216, 1),
+                        width: 2,
+                      ),
+                      color: Color.fromRGBO(243, 242, 242, 1),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    // Crear lista de scroll horizontal
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 7,
+                      itemBuilder: (context, index) {
+                        return ItemDay(
+                          dia: index,
+                          alto: MediaQuery.of(context).size.height * 0.123,
+                          ancho: MediaQuery.of(context).size.width * 0.3,
+                          daySelected: selectedDays.contains(index),
+                          onDaySelected:
+                              handleDaySelection, // Paso de la función de selección
+                        );
+                      },
+                    ),
+                    // child: GridView.count(
+                    //   crossAxisCount: 3,
+                    //   children: List.generate(7, (index) {
+                    //     return ItemDay(
+                    //       dia: index,
+                    //       alto: MediaQuery.of(context).size.height * 0.123,
+                    //       ancho: MediaQuery.of(context).size.width * 0.3,
+                    //     );
+                    //   }),
+                    // ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Expanded(
             child: Container(
               color: Color.fromARGB(255, 242, 226, 5),
@@ -378,20 +388,25 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                         initialValue:
                                             double.parse(_soundController.text),
                                       ),
-                                      IntervalsTime(
-                                        colorBar:
-                                            Color.fromARGB(255, 74, 175, 70),
-                                        titleVisible: true,
-                                        units: true,
-                                        margin: true,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.9,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.475,
-                                        initialValue: _intervalsController.text,
-                                      ),
+                                      HourSelection(
+                                          timeInitial: time,
+                                          units: false,
+                                          onHourSelected: getHour,
+                                          customFormat: true),
+                                      // IntervalsTime(
+                                      //   colorBar:
+                                      //       Color.fromARGB(255, 74, 175, 70),
+                                      //   titleVisible: true,
+                                      //   units: true,
+                                      //   margin: true,
+                                      //   width:
+                                      //       MediaQuery.of(context).size.width *
+                                      //           0.9,
+                                      //   height:
+                                      //       MediaQuery.of(context).size.height *
+                                      //           0.475,
+                                      //   initialValue: _intervalsController.text,
+                                      // ),
                                       Container(
                                         margin: EdgeInsets.only(
                                             top: 10, bottom: 10),
