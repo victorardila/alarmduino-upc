@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:alarmduino_upc/domain/controllers/controller_alarm.dart';
 import 'package:alarmduino_upc/ui/components/custom_dialog.dart';
+import 'package:alarmduino_upc/ui/components/custom_filterday.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -110,110 +111,129 @@ class _AlarmListState extends State<AlarmList> {
                 // Conteedor de la lista de alarmas
                 Expanded(
                   child: Container(
-                    child: _alarms.isEmpty
-                        ? Center(
-                            child: Text('No hay timbres',
-                                style: TextStyle(
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black)),
-                          )
-                        : ListView.builder(
-                            itemCount: _alarms.length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  // Llama a CustomDialog con los datos de la alarma seleccionada
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return CustomDialog(
-                                          indexAlarmCurrent: index + 1,
-                                          alarmCurrent:
-                                              jsonDecode(_alarms[index]));
-                                    },
-                                  ).then((value) {
-                                    // Llama a getAlarms() después de completar la acción en el CustomDialog
-                                    getAlarms();
-                                  });
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.all(8.0),
-                                  padding: EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 6.0,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      SizedBox(
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.alarm,
-                                                color: Colors.black,
-                                                size: 36.0),
-                                            SizedBox(width: 16.0),
-                                            RichText(
-                                              textAlign: TextAlign.center,
-                                              text: TextSpan(
-                                                text: 'Timbre ${index + 1}\n',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                children: [
-                                                  TextSpan(
-                                                    text: jsonDecode(
-                                                                _alarms[index])[
-                                                            'name'] +
-                                                        ' - ' +
-                                                        jsonDecode(
-                                                                _alarms[index])[
-                                                            'day'] +
-                                                        ' - ' +
-                                                        jsonDecode(
-                                                                _alarms[index])[
-                                                            'hour'],
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 16.0,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                                  ),
-                                                ],
+                    child: Column(
+                      children: [
+                        CustomFilterDay(),
+                        Expanded(
+                          child: Container(
+                            child: _alarms.isEmpty
+                                ? Center(
+                                    child: Text('No hay timbres',
+                                        style: TextStyle(
+                                            fontSize: 24.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black)),
+                                  )
+                                : ListView.builder(
+                                    itemCount: _alarms.length,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          // Llama a CustomDialog con los datos de la alarma seleccionada
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return CustomDialog(
+                                                  indexAlarmCurrent: index + 1,
+                                                  alarmCurrent: jsonDecode(
+                                                      _alarms[index]));
+                                            },
+                                          ).then((value) {
+                                            // Llama a getAlarms() después de completar la acción en el CustomDialog
+                                            getAlarms();
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.all(8.0),
+                                          padding: EdgeInsets.all(16.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 6.0,
+                                                offset: Offset(0, 2),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(
+                                                child: Row(
+                                                  children: [
+                                                    Icon(Icons.alarm,
+                                                        color: Colors.black,
+                                                        size: 36.0),
+                                                    SizedBox(width: 16.0),
+                                                    RichText(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      text: TextSpan(
+                                                        text:
+                                                            'Timbre ${index + 1}\n',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        children: [
+                                                          TextSpan(
+                                                            text: jsonDecode(
+                                                                        _alarms[
+                                                                            index])[
+                                                                    'name'] +
+                                                                ' - ' +
+                                                                jsonDecode(_alarms[
+                                                                        index])[
+                                                                    'day'] +
+                                                                ' - ' +
+                                                                jsonDecode(_alarms[
+                                                                        index])[
+                                                                    'hour'],
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 16.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    String alarmString =
+                                                        _alarms[index];
+                                                    Map<String, dynamic>
+                                                        alarmMap =
+                                                        jsonDecode(alarmString);
+                                                    deleteAlarm(alarmMap['id']);
+                                                  },
+                                                  icon: Icon(Icons.delete,
+                                                      color: Color.fromARGB(
+                                                          255, 255, 0, 0),
+                                                      size: 36.0))
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      IconButton(
-                                          onPressed: () {
-                                            String alarmString = _alarms[index];
-                                            Map<String, dynamic> alarmMap =
-                                                jsonDecode(alarmString);
-                                            deleteAlarm(alarmMap['id']);
-                                          },
-                                          icon: Icon(Icons.delete,
-                                              color: Color.fromARGB(
-                                                  255, 255, 0, 0),
-                                              size: 36.0))
-                                    ],
+                                      );
+                                    },
                                   ),
-                                ),
-                              );
-                            },
                           ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
