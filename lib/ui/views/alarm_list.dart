@@ -271,9 +271,11 @@ class _AlarmListState extends State<AlarmList> {
         children: [
           _buildFabOption(FontAwesomeIcons.bellConcierge, 'Test', () {
             // Handle option 1
-            sendbluetooth("E");
+            sendbluetooth("TEST");
           }),
           _buildFabOption(Icons.alarm_add, 'Agregar', () {
+            // Necesito que me lleve a la vista settings
+            setPage(1);
             // showDialog(
             //   context: context,
             //   builder: (context) {
