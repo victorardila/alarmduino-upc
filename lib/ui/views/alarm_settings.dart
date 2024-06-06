@@ -23,6 +23,7 @@ class AlarmSettings extends StatefulWidget {
 
 class _AlarmSettingsState extends State<AlarmSettings> {
   ControllerAlarm _controllerAlarm = Get.put(ControllerAlarm());
+  TextEditingController _nombreController = TextEditingController();
   TextEditingController _volumeController = TextEditingController();
   TextEditingController _soundController = TextEditingController();
   TextEditingController _intervalsController = TextEditingController();
@@ -359,6 +360,68 @@ class _AlarmSettingsState extends State<AlarmSettings> {
                                 child: Container(
                                   child: Column(
                                     children: [
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {});
+                                        },
+                                        child: Container(
+                                          height: 60.0,
+                                          margin: EdgeInsets.only(
+                                              top: 10.0, bottom: 10.0),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.8,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey
+                                                  .shade400, // Puedes cambiar el color del borde aquí
+                                              width:
+                                                  1.0, // Puedes ajustar el grosor del borde aquí
+                                            ),
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 6.0,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.label,
+                                                  color: Colors.black),
+                                              SizedBox(width: 10.0),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.4,
+                                                child: TextField(
+                                                  controller: _nombreController,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 20.0),
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                        'Nombre de la alarma',
+                                                    hintStyle: TextStyle(
+                                                        color: Colors.black),
+                                                    border: InputBorder.none,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
                                       // VolumeBar(
                                       //   colorBar:
                                       //       Color.fromARGB(255, 74, 175, 70),
