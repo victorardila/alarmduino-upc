@@ -68,7 +68,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
     return days;
   }
 
-  String createmessage() {
+  sendBluetoothMessage() {
     // recorrer los dias seleccionados
     String message = "";
     List<String> days = formedDays();
@@ -79,8 +79,8 @@ class _AlarmSettingsState extends State<AlarmSettings> {
       message += "/" + days[i];
       message += "/" + formedtime();
       message += "/" + _soundController.text;
+      sendbluetooth(message);
     }
-    return message;
   }
 
   sendbluetooth(String message) {
@@ -118,8 +118,7 @@ class _AlarmSettingsState extends State<AlarmSettings> {
         duration: Duration(seconds: 3),
         animationDuration: Duration(milliseconds: 500),
       );
-      String message = createmessage();
-      sendbluetooth(message);
+      sendBluetoothMessage();
     } else {
       Get.snackbar(
         'Error al guardar',
